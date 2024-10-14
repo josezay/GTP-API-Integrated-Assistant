@@ -1,7 +1,6 @@
-﻿namespace CompanionAPI.Common.Http
+﻿namespace CompanionAPI.Common.Http;
+
+public static class HttpContextItemKeys
 {
-    public static class HttpContextItemKeys
-    {
-        public const string Errors = "errors";
-    }
+    public const string Errors = "errors";
 }
