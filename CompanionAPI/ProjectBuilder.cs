@@ -16,6 +16,8 @@ public static class ProjectBuilder
     {
         app.UseValidationMiddleware();
 
+        app.UseExceptionHandler("/error");
+
         return app;
     }
 
