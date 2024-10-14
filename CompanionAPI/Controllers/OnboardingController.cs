@@ -1,5 +1,7 @@
-﻿using CompanionAPI.Interfaces;
-using CompanionAPI.Requests;
+﻿using CompanionAPI.Contracts.Requests.UserOnboardingRequest;
+using CompanionAPI.Contracts.Responses.UserOnboardingResponse;
+using CompanionAPI.Interfaces;
+using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -8,11 +10,16 @@ namespace CompanionAPI.Controllers;
 [Route("api/[controller]")]
 public class OnboardingController : ApiController
 {
+    private readonly IMapper _mapper;
     private readonly IOnboardService _onboardService;
 
-    public OnboardingController(IOnboardService onboardService)
+    public OnboardingController(
+        IOnboardService onboardService,
+        IMapper mapper
+        )
     {
         _onboardService = onboardService;
+        _mapper = mapper;
     }
 
     [HttpPost]
@@ -22,7 +29,10 @@ public class OnboardingController : ApiController
     [SwaggerResponse(400, "Invalid input data")]
     public async Task<IActionResult> OnboardUser([FromBody] UserOnboardingRequest request)
     {
-        await _onboardService.OnboardUser(request, HttpContext.RequestAborted);
-        return Ok("User registered successfully");
+        var userResult = await _onboardService.OnboardUser(request, HttpContext.RequestAborted);
+
+        return userResult.Match(
+            userResult => Ok(_mapper.Map<UserOnboardingResponse>(userResult)),
+            errors => Problem(errors));
     }
 }
