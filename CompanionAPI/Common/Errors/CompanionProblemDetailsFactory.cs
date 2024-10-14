@@ -12,6 +12,7 @@ namespace CompanionAPI.Common.Errors
         private readonly ApiBehaviorOptions _options;
         private readonly Action<ProblemDetailsContext>? _configure;
 
+        //TODO: Log sentry.
         public CompanionProblemDetailsFactory(
             IOptions<ApiBehaviorOptions> options,
             IOptions<ProblemDetailsOptions>? problemDetailsOptions = null)
