@@ -1,6 +1,4 @@
-﻿using Swashbuckle.AspNetCore;
-
-namespace CompanionAPI.Requests;
+﻿namespace CompanionAPI.Requests;
 
 public class UserOnboardingRequest
 {
