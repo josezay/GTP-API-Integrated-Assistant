@@ -2,6 +2,7 @@
 using CompanionAPI.Interfaces;
 using CompanionAPI.Services;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -19,7 +20,7 @@ public static class DependencyInjection
             .AddValidators()
             .AddControllersDeps()
             .AddMappings()
-            ;
+            .AddSwagger();
 
         return services;
     }
@@ -48,6 +49,8 @@ public static class DependencyInjection
     private static IServiceCollection AddValidators(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddFluentValidationAutoValidation();
+
 
         return services;
     }
@@ -63,4 +66,11 @@ public static class DependencyInjection
         return services;
     }
 
+    private static IServiceCollection AddSwagger(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
+        return services;
+    }
 }
