@@ -12,7 +12,6 @@ public static class ProjectConfigurator
 
         app.UseAuthorization();
 
-
         return app;
     }
 
@@ -22,6 +21,5 @@ public static class ProjectConfigurator
         
         return app;
     }
-
 
 }
