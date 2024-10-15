@@ -1,4 +1,4 @@
-﻿using CompanionAPI.Contracts.Requests.UserOnboardingRequest;
+﻿using CompanionAPI.Contracts.UserOnboardingContracts;
 using CompanionAPI.Models;
 using ErrorOr;
 

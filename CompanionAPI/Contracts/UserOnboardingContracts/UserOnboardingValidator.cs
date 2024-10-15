@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace CompanionAPI.Contracts.Requests.UserOnboardingRequest;
+namespace CompanionAPI.Contracts.UserOnboardingContracts;
 
 public class UserOnboardingRequestValidator : AbstractValidator<UserOnboardingRequest>
 {

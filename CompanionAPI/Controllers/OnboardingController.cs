@@ -1,5 +1,4 @@
-﻿using CompanionAPI.Contracts.Requests.UserOnboardingRequest;
-using CompanionAPI.Contracts.Responses.UserOnboardingResponse;
+﻿using CompanionAPI.Contracts.UserOnboardingContracts;
 using CompanionAPI.Interfaces;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;

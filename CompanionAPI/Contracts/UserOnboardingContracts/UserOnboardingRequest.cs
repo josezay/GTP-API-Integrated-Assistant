@@ -1,4 +1,4 @@
-﻿namespace CompanionAPI.Contracts.Requests.UserOnboardingRequest;
+﻿namespace CompanionAPI.Contracts.UserOnboardingContracts;
 
 public record UserOnboardingRequest(
     string Name,
