@@ -6,7 +6,7 @@ public static class ProjectConfigurator
     {
         app.AddMiddlewares();
 
-        app.UseExceptionHandler("/error");
+        //app.UseExceptionHandler("/error");
 
         app.UseHttpsRedirection();
 

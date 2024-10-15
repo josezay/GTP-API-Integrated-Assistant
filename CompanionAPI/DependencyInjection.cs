@@ -3,7 +3,9 @@ using CompanionAPI.Repositories.UserRepository;
 using CompanionAPI.Services.OnboardService;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -77,8 +79,18 @@ public static class DependencyInjection
 
     private static IServiceCollection AddPersistence(this IServiceCollection services)
     {
-        string projectId = "your-project-id";
-        FirestoreDb db = FirestoreDb.Create(projectId);
+        string credentialsPath = "Properties/firestore-credentials.json";
+        if (!File.Exists(credentialsPath))
+        {
+            throw new FileNotFoundException($"The credentials file was not found: {credentialsPath}");
+        }
+        GoogleCredential credential = GoogleCredential.FromFile(credentialsPath);
+        FirestoreClientBuilder clientBuilder = new FirestoreClientBuilder
+        {
+            Credential = credential
+        };
+        FirestoreClient client = clientBuilder.Build();
+        FirestoreDb db = FirestoreDb.Create("companion-f6b6a", client);
         services.AddSingleton(db);
         services.AddScoped<IUserRepository, UserRepository>();
 
