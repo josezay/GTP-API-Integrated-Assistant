@@ -1,15 +1,21 @@
-﻿using CompanionAPI.Interfaces;
-using CompanionAPI.Requests;
+﻿using CompanionAPI.Contracts.Requests.UserOnboardingRequest;
+using CompanionAPI.Interfaces;
+using CompanionAPI.Models;
 using ErrorOr;
 
 namespace CompanionAPI.Services;
 
 public class OnboardingService : IOnboardService
 {
-    public Task<ErrorOr<Success>> OnboardUser(UserOnboardingRequest request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<User>> OnboardUser(UserOnboardingRequest request, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"User {request.Name} onboarded successfully.");
+        await Task.CompletedTask;
 
-        return default!;
+        var user = new User
+        {
+            Name = request.Name
+        };
+
+        return user;
     }
 }
