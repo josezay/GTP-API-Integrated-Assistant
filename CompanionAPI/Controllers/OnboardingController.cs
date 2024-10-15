@@ -1,5 +1,5 @@
 ﻿using CompanionAPI.Contracts.UserOnboardingContracts;
-using CompanionAPI.Interfaces;
+using CompanionAPI.Services.OnboardService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
