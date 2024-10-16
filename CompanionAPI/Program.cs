@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .ProjectStartup();
 
-
 var app = builder.Build();
 
 app.ConfigureProject();

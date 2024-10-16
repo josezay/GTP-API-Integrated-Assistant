@@ -2,7 +2,7 @@
 using CompanionAPI.Models;
 using ErrorOr;
 
-namespace CompanionAPI.Interfaces;
+namespace CompanionAPI.Services.OnboardService;
 
 public interface IOnboardService
 {

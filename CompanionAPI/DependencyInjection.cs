@@ -1,8 +1,11 @@
 ﻿using CompanionAPI.Common.Errors;
-using CompanionAPI.Interfaces;
-using CompanionAPI.Services;
+using CompanionAPI.Repositories.UserRepository;
+using CompanionAPI.Services.OnboardService;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -20,7 +23,8 @@ public static class DependencyInjection
             .AddValidators()
             .AddControllersDeps()
             .AddMappings()
-            .AddSwagger();
+            .AddSwagger()
+            .AddPersistence();
 
         return services;
     }
@@ -51,7 +55,6 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddFluentValidationAutoValidation();
 
-
         return services;
     }
 
@@ -70,6 +73,24 @@ public static class DependencyInjection
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        return services;
+    }
+
+    private static IServiceCollection AddPersistence(this IServiceCollection services)
+    {
+        string credentialsPath = "Properties/serviceAccountKey.json";
+
+        GoogleCredential credential = GoogleCredential.FromFile(credentialsPath);
+        FirestoreClientBuilder clientBuilder = new FirestoreClientBuilder
+        {
+            Credential = credential
+        };
+        FirestoreClient client = clientBuilder.Build();
+        FirestoreDb db = FirestoreDb.Create("companion-f6b6a", client);
+        services.AddSingleton(db);
+
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

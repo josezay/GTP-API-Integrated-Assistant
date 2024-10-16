@@ -6,12 +6,11 @@ public static class ProjectConfigurator
     {
         app.AddMiddlewares();
 
-        app.UseExceptionHandler("/error");
+        //app.UseExceptionHandler("/error");
 
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         return app;
     }
@@ -22,6 +21,5 @@ public static class ProjectConfigurator
         
         return app;
     }
-
 
 }
