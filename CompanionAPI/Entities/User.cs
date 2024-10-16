@@ -1,6 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace CompanionAPI.Models;
+namespace CompanionAPI.Entities;
 
 [FirestoreData]
 public class User

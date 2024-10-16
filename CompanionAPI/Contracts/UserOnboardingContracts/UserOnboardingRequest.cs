@@ -5,6 +5,6 @@ public record UserOnboardingRequest(
     string Email,
     string Gender,
     int Age,
-    double Height,
-    double Weight
+    int Height,
+    int Weight
 );

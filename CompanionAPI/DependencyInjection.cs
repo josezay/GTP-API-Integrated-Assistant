@@ -1,5 +1,6 @@
 ﻿using CompanionAPI.Common.Errors;
 using CompanionAPI.Repositories.UserRepository;
+using CompanionAPI.Services.GoalService;
 using CompanionAPI.Services.OnboardService;
 using FluentValidation;
 using FluentValidation.AspNetCore;

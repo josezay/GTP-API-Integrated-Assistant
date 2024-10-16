@@ -1,10 +1,11 @@
 ﻿using CompanionAPI.Contracts.UserOnboardingContracts;
-using CompanionAPI.Models;
+using CompanionAPI.Entities;
 using ErrorOr;
+using static Google.Rpc.Context.AttributeContext.Types;
 
-namespace CompanionAPI.Services.OnboardService;
+namespace CompanionAPI.Services.GoalService;
 
 public interface IGoalService
 {
-    ErrorOr<Goal> CalcGoal();
+    ErrorOr<Goal> CalcGoal(string gender, int age, int height, int weight);
 }

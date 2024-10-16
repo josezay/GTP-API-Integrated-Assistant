@@ -1,5 +1,5 @@
 ﻿using CompanionAPI.Contracts.UserOnboardingContracts;
-using CompanionAPI.Models;
+using CompanionAPI.Entities;
 using ErrorOr;
 
 namespace CompanionAPI.Services.OnboardService;

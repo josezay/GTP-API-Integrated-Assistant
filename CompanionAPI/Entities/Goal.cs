@@ -1,6 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace CompanionAPI.Models;
+namespace CompanionAPI.Entities;
 
 [FirestoreData]
 public class Goal
@@ -14,7 +14,7 @@ public class Goal
     [FirestoreProperty]
     public int Proteins { get; private set; }
 
-    public Goal() {  }
+    public Goal() { }
 
     private Goal(DateTime datetime, int calories, int proteins)
     {

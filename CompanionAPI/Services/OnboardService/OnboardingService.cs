@@ -1,6 +1,8 @@
 ﻿using CompanionAPI.Contracts.UserOnboardingContracts;
-using CompanionAPI.Models;
+using CompanionAPI.Entities;
+using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
+using CompanionAPI.Services.GoalService;
 using ErrorOr;
 
 namespace CompanionAPI.Services.OnboardService;
@@ -19,6 +21,12 @@ public class OnboardingService : IOnboardService
     }
     public async Task<ErrorOr<User>> OnboardUser(UserOnboardingRequest request, CancellationToken cancellationToken)
     {
+        var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
+        if (existingUser != null)
+        {
+            return UserErrors.UserAlreadyExists;
+        }
+
         var user = User.Onboard(
                 request.Name,
                 request.Email,
@@ -28,15 +36,20 @@ public class OnboardingService : IOnboardService
                 request.Weight
             );
 
-        var errorOrGoal = _goalService.CalcGoal();
+        var errorOrGoal = _goalService.CalcGoal(
+            request.Gender,
+            request.Age,
+            request.Height,
+            request.Weight);
+
         if (errorOrGoal.IsError)
         {
-            throw new Exception("Failed to calculate goal"); // TODO: Sentry and ErrorOr response
+            return GoalErrors.CalcError; // TODO: Sentry
         }
 
         var goal = errorOrGoal.Value;
 
-        user.AddGoal(goal);
+        user.AddGoal(errorOrGoal.Value);
 
         await _userRepository.SaveUserAsync(user);
 
