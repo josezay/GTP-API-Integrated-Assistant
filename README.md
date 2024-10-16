@@ -12,13 +12,13 @@ Este repositório contém o código do projeto Companion utilizando .NET 8. Siga
 1. Clone este repositório:
 
     ```bash
-    git clone https://github.com/usuario/projeto-xyz.git
+    git clone git@github.com:josezay/CompanionAPI.git
     ```
 
 2. Acesse o diretório do projeto:
 
     ```bash
-    cd projeto-xyz
+    cd CompanionAPI
     ```
 
 3. Restaure os pacotes NuGet:
