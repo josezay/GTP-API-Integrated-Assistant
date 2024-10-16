@@ -7,5 +7,5 @@ namespace CompanionAPI.Services.GoalService;
 
 public interface IGoalService
 {
-    ErrorOr<Goal> CalcGoal(string gender, int age, int height, int weight);
+    ErrorOr<Goal> CalcGoal(User user);
 }

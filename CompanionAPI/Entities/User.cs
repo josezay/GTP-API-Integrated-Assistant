@@ -33,9 +33,13 @@ public class User
     [FirestoreProperty]
     public List<Goal> Goals { get; private set; }
 
+    [FirestoreProperty]
+    public List<Exercise> Exercises { get; private set; }
+
     public User()
     {
         Goals = [];
+        Exercises = [];
     }
 
     private User(
@@ -46,7 +50,8 @@ public class User
         double height,
         double weight,
         DateTime createdAt,
-        bool firstLogin)
+        bool firstLogin,
+        List<Exercise> exercises)
     {
         Name = name;
         Email = email;
@@ -57,6 +62,7 @@ public class User
         CreatedAt = createdAt;
         FirstLogin = firstLogin;
         Goals = [];
+        Exercises = exercises ?? [];
     }
 
     public static User Onboard(
@@ -65,7 +71,8 @@ public class User
         string gender,
         int age,
         double height,
-        double weight)
+        double weight,
+        List<Exercise> exercises)
     {
         return new User(
             name,
@@ -75,7 +82,8 @@ public class User
             height,
             weight,
             DateTime.UtcNow,
-            true);
+            true,
+            exercises);
     }
 
     public void AddGoal(Goal goal)

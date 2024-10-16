@@ -5,9 +5,9 @@ namespace CompanionAPI.Services.GoalService;
 
 public class GoalService : IGoalService
 {
-    public ErrorOr<Goal> CalcGoal(string gender, int age, int height, int weigh) // Unidades de medida: altura em cm, peso em gramas
+    public ErrorOr<Goal> CalcGoal(User user)
     {
+        //TODO: Pedrão, calcular (ou chamar quem calcule) o TMB aqui
         return Goal.Create(2000, 100);
     }
-
 }
