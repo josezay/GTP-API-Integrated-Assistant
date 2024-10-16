@@ -1,4 +1,4 @@
-# Projeto XYZ - .NET 8
+# Projeto Companion - .NET 8
 
 Este repositório contém o código do projeto Companion utilizando .NET 8. Siga as instruções abaixo para configurar e executar o projeto.
 
