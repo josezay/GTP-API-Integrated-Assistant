@@ -79,11 +79,8 @@ public static class DependencyInjection
 
     private static IServiceCollection AddPersistence(this IServiceCollection services)
     {
-        string credentialsPath = "Properties/firestore-credentials.json";
-        if (!File.Exists(credentialsPath))
-        {
-            throw new FileNotFoundException($"The credentials file was not found: {credentialsPath}");
-        }
+        string credentialsPath = "Properties/serviceAccountKey.json";
+
         GoogleCredential credential = GoogleCredential.FromFile(credentialsPath);
         FirestoreClientBuilder clientBuilder = new FirestoreClientBuilder
         {
@@ -92,6 +89,7 @@ public static class DependencyInjection
         FirestoreClient client = clientBuilder.Build();
         FirestoreDb db = FirestoreDb.Create("companion-f6b6a", client);
         services.AddSingleton(db);
+
         services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
