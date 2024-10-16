@@ -6,5 +6,12 @@ public record UserOnboardingRequest(
     string Gender,
     int Age,
     int Height,
-    int Weight
+    int Weight,
+    List<ExerciseRequest>? Exercises
+);
+
+public record ExerciseRequest(
+    string ActivityName,
+    int WeeklyFrequency,
+    int DurationInMinutes
 );
