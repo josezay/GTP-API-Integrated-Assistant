@@ -2,9 +2,9 @@
 
 public record UserOnboardingRequest(
     string Name,
+    string Email,
     string Gender,
     int Age,
-    double Weight,
     double Height,
-    string Goal
+    double Weight
 );

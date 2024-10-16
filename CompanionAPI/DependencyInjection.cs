@@ -38,6 +38,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<IGoalService, GoalService>();
         services.AddScoped<IOnboardService, OnboardingService>();
 
         return services;
