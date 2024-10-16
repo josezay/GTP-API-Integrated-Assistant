@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using CompanionAPI.Common.Validators;
 
 namespace CompanionAPI.Contracts.UserOnboardingContracts;
 
@@ -7,10 +8,14 @@ public class UserOnboardingRequestValidator : AbstractValidator<UserOnboardingRe
     public UserOnboardingRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required.");
-        RuleFor(x => x.Gender).NotEmpty().WithMessage("Gender is required.");
-        RuleFor(x => x.Age).InclusiveBetween(18, 100).WithMessage("Age must be between 18 and 100.");
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Email is required.")
+            .Must(Validators.BeAValidEmail).WithMessage("Email is not valid.");
+        RuleFor(x => x.Gender)
+            .NotEmpty().WithMessage("Gender is required.")
+            .Must(Validators.BeAValidGender).WithMessage("Gender must be 'F' or 'M'."); 
+        RuleFor(x => x.Age).InclusiveBetween(1, 100).WithMessage("Age must be between 1 and 100.");
         RuleFor(x => x.Weight).GreaterThan(0).WithMessage("Weight must be greater than 0.");
         RuleFor(x => x.Height).GreaterThan(0).WithMessage("Height must be greater than 0.");
-        RuleFor(x => x.Goal).NotEmpty().WithMessage("Goal is required.");
     }
 }
