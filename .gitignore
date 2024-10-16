@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /CompanionAPI/appsettings.json
+/CompanionAPI/Properties/serviceAccountKey.json
