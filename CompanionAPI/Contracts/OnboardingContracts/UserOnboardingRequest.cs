@@ -1,4 +1,6 @@
-﻿namespace CompanionAPI.Contracts.UserOnboardingContracts;
+﻿using CompanionAPI.Contracts.ExerciseContracts;
+
+namespace CompanionAPI.Contracts.OnboardingContracts;
 
 public record UserOnboardingRequest(
     string Name,
@@ -8,10 +10,4 @@ public record UserOnboardingRequest(
     int Height,
     int Weight,
     List<ExerciseRequest>? Exercises
-);
-
-public record ExerciseRequest(
-    string ActivityName,
-    int WeeklyFrequency,
-    int DurationInMinutes
 );

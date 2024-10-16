@@ -1,4 +1,4 @@
-﻿using CompanionAPI.Contracts.UserOnboardingContracts;
+﻿using CompanionAPI.Contracts.OnboardingContracts;
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;

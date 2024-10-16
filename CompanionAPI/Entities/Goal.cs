@@ -6,7 +6,7 @@ namespace CompanionAPI.Entities;
 public class Goal
 {
     [FirestoreProperty]
-    public DateTime Datetime { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
     [FirestoreProperty]
     public int Calories { get; private set; }
@@ -16,9 +16,9 @@ public class Goal
 
     public Goal() { }
 
-    private Goal(DateTime datetime, int calories, int proteins)
+    private Goal(DateTime createdAt, int calories, int proteins)
     {
-        Datetime = datetime;
+        CreatedAt = createdAt;
         Calories = calories;
         Proteins = proteins;
     }
