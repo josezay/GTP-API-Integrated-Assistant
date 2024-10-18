@@ -1,4 +1,4 @@
-﻿using CompanionAPI.Contracts.ExerciseContracts;
+﻿using CompanionAPI.Contracts.ActivityContracts;
 
 namespace CompanionAPI.Contracts.OnboardingContracts;
 
@@ -9,5 +9,5 @@ public record UserOnboardingRequest(
     int Age,
     int Height,
     int Weight,
-    List<ExerciseRequest>? Exercises
+    List<ActivityRequest>? Activities
 );

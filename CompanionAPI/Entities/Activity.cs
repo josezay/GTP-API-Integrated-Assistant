@@ -3,11 +3,11 @@
 namespace CompanionAPI.Entities;
 
 [FirestoreData]
-public class Exercise
+public class Activity
 {
 
     [FirestoreProperty]
-    public string ActivityName { get; private set; }
+    public string Name { get; private set; }
 
     [FirestoreProperty]
     public int WeeklyFrequency { get; private set; }
@@ -18,26 +18,26 @@ public class Exercise
     [FirestoreProperty]
     public DateTime CreatedAt { get; private set; }
 
-    public Exercise(){}
+    public Activity(){}
 
-    private Exercise(
+    private Activity(
         string activityName,
         int weeklyFrequency,
         int durationInMinutes,
         DateTime createdAt)
     {
-        ActivityName = activityName;
+        Name = activityName;
         WeeklyFrequency = weeklyFrequency;
         DurationInMinutes = durationInMinutes;
         CreatedAt = createdAt;
     }
 
-    public static Exercise Create(
+    public static Activity Create(
         string activityName,
         int weeklyFrequency,
         int durationInMinutes)
     {
-        return new Exercise(
+        return new Activity(
             activityName,
             weeklyFrequency,
             durationInMinutes,

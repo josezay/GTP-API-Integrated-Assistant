@@ -57,8 +57,8 @@ public class OnboardingService : IOnboardService
 
     private User CreateUser(UserOnboardingRequest request)
     {
-        var exercises = request.Exercises?.Select(e => Exercise.Create(
-             e.ActivityName,
+        var activities = request.Activities?.Select(e => Activity.Create(
+             e.Name,
              e.WeeklyFrequency,
              e.DurationInMinutes)).ToList() ?? [];
 
@@ -69,7 +69,7 @@ public class OnboardingService : IOnboardService
             request.Age,
             request.Height,
             request.Weight,
-            exercises
+            activities
         );
     }
 

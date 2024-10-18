@@ -1,5 +1,5 @@
 ﻿using CompanionAPI.Common.Validators;
-using CompanionAPI.Contracts.ExerciseContracts;
+using CompanionAPI.Contracts.ActivityContracts;
 using FluentValidation;
 
 namespace CompanionAPI.Contracts.OnboardingContracts;
@@ -19,6 +19,6 @@ public class UserOnboardingRequestValidator : AbstractValidator<UserOnboardingRe
         RuleFor(x => x.Weight).GreaterThan(0).WithMessage("Weight must be greater than 0.");
         RuleFor(x => x.Height).GreaterThan(0).WithMessage("Height must be greater than 0.");
 
-        RuleForEach(x => x.Exercises).SetValidator(new ExerciseRequestValidator());
+        RuleForEach(x => x.Activities).SetValidator(new ActivityRequestValidator());
     }
 }
