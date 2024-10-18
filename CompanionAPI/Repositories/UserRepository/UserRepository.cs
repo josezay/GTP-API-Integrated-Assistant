@@ -12,10 +12,12 @@ public class UserRepository : IUserRepository
         _firestoreDb = firestoreDb;
     }
 
-    public async Task SaveUserAsync(User user)
+    public async Task<User> SaveUserAsync(User user)
     {
         CollectionReference collection = _firestoreDb.Collection("users");
-        await collection.AddAsync(user);
+        DocumentReference documentReference = await collection.AddAsync(user);
+        DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+        return documentSnapshot.ConvertTo<User>();
     }
 
     public async Task UpdateUserAsync(User user)
