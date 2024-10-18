@@ -18,6 +18,12 @@ public class UserRepository : IUserRepository
         await collection.AddAsync(user);
     }
 
+    public async Task UpdateUserAsync(User user)
+    {
+        DocumentReference document = _firestoreDb.Collection("users").Document(user.Id);
+        await document.SetAsync(user, SetOptions.Overwrite);
+    }
+
     public async Task<User?> GetUserByEmailAsync(string email)
     {
         CollectionReference collection = _firestoreDb.Collection("users");
@@ -28,6 +34,19 @@ public class UserRepository : IUserRepository
         {
             DocumentSnapshot document = snapshot.Documents[0];
             return document.ConvertTo<User>();
+        }
+
+        return null;
+    }
+
+    public async Task<User?> GetUserByIdAsync(string id)
+    {
+        DocumentReference document = _firestoreDb.Collection("users").Document(id);
+        DocumentSnapshot snapshot = await document.GetSnapshotAsync();
+
+        if (snapshot.Exists)
+        {
+            return snapshot.ConvertTo<User>();
         }
 
         return null;
