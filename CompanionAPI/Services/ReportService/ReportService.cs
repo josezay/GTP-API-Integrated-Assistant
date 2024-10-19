@@ -9,11 +9,15 @@ namespace CompanionAPI.Services.ReportService;
 public class ReportService : IReportService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IOpenAiService _openAiService;
+
     public ReportService(
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IOpenAiService openAiService
         )
     {
         _userRepository = userRepository;
+        _openAiService = openAiService;
     }
 
     public async Task<ErrorOr<Report>> AddReport(AddReportRequest request)
@@ -25,6 +29,8 @@ public class ReportService : IReportService
         }
 
         var report = Report.Create(request.Query);
+
+        var response = await _openAiService.CallAIAsync(report.Query);
 
 
         user.AddReport(report);

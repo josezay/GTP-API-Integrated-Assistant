@@ -3,6 +3,7 @@ using CompanionAPI.Contracts.AppSettings;
 using CompanionAPI.Repositories.UserRepository;
 using CompanionAPI.Services.GoalService;
 using CompanionAPI.Services.OnboardService;
+using CompanionAPI.Services.OpenAiService;
 using CompanionAPI.Services.ReportService;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -52,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<IGoalService, GoalService>();
         services.AddScoped<IOnboardService, OnboardingService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IOpenAiService, OpenAIService>();
 
         return services;
     }
