@@ -24,6 +24,14 @@ public class ReportService : IReportService
             return UserErrors.UserNotExists;
         }
 
+        var report = Report.Create(request.Query);
+
+
+        user.AddReport(report);
+
+        await _userRepository.UpdateUserAsync(user);
+
+
         return default!;
     }
 }

@@ -29,4 +29,14 @@ public class Report
         QueriedAt = queriedAt;
     }
 
+    public static Report Create(
+        string query)
+    {
+        var queriedAt = DateTime.UtcNow;
+
+        return new Report(
+            query,
+            queriedAt);
+    }
+
 }
