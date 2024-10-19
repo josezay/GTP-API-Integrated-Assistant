@@ -1,7 +1,9 @@
 ﻿using CompanionAPI.Common.Errors;
+using CompanionAPI.Contracts.AppSettings;
 using CompanionAPI.Repositories.UserRepository;
 using CompanionAPI.Services.GoalService;
 using CompanionAPI.Services.OnboardService;
+using CompanionAPI.Services.ReportService;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Google.Apis.Auth.OAuth2;
@@ -16,7 +18,7 @@ namespace CompanionAPI;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection ProjectStartup(this IServiceCollection services)
+    public static IServiceCollection ProjectStartup(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddServices()
@@ -25,6 +27,7 @@ public static class DependencyInjection
             .AddControllersDeps()
             .AddMappings()
             .AddSwagger()
+            .AddConfig(configuration)
             .AddPersistence();
 
         return services;
@@ -33,6 +36,13 @@ public static class DependencyInjection
     private static IServiceCollection AddControllersDeps(this IServiceCollection services)
     {
         services.AddControllers();
+
+        return services;
+    }
+
+    private static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<OpenAISettings>(configuration.GetSection("OpenAI"));
 
         return services;
     }
