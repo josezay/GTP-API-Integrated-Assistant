@@ -41,6 +41,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IGoalService, GoalService>();
         services.AddScoped<IOnboardService, OnboardingService>();
+        services.AddScoped<IReportService, ReportService>();
 
         return services;
     }
