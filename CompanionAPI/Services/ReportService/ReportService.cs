@@ -1,10 +1,10 @@
-﻿using CompanionAPI.Contracts.GoalContracts;
+﻿using CompanionAPI.Contracts.ReportContracts;
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
 using ErrorOr;
 
-namespace CompanionAPI.Services.GoalService;
+namespace CompanionAPI.Services.ReportService;
 
 public class ReportService : IReportService
 {
