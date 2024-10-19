@@ -5,6 +5,8 @@ namespace CompanionAPI.Entities;
 [FirestoreData]
 public class User
 {
+    [FirestoreDocumentId]
+    public string Id { get; private set; }
 
     [FirestoreProperty]
     public string Name { get; private set; }

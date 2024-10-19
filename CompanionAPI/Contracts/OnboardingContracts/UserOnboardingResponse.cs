@@ -1,5 +1,5 @@
 ﻿namespace CompanionAPI.Contracts.OnboardingContracts;
 
 public record UserOnboardingResponse(
-    string Name
+    string Id
 );

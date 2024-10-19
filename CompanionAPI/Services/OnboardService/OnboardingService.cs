@@ -37,9 +37,7 @@ public class OnboardingService : IOnboardService
 
         user.AddGoal(errorOrGoal.Value);
 
-        await SaveUser(user);
-
-        return user;
+        return await SaveUser(user);
     }
 
     private async Task<ErrorOr<Success>> ValidateRequest(UserOnboardingRequest request)
@@ -49,8 +47,6 @@ public class OnboardingService : IOnboardService
         {
             return UserErrors.UserAlreadyExists;
         }
-
-        // Add more validation logic here if needed
 
         return new Success();
     }
@@ -85,8 +81,8 @@ public class OnboardingService : IOnboardService
         return goal;
     }
 
-    private async Task SaveUser(User user)
+    private async Task<User> SaveUser(User user)
     {
-        await _userRepository.SaveUserAsync(user);
+        return await _userRepository.SaveUserAsync(user);
     }
 }

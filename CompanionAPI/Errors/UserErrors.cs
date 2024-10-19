@@ -8,5 +8,7 @@ public static class UserErrors
         code: "User.Duplicate",
         description: "User already registred");
 
-
+    public static Error UserNotExists => Error.NotFound(
+        code: "User.NotFound",
+        description: "User not found");
 }
