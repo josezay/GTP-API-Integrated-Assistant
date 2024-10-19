@@ -7,27 +7,27 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace CompanionAPI.Controllers;
 
 [Route("api/[controller]")]
-public class GoalController: ApiController
+public class ReportController : ApiController
 {
     private readonly IMapper _mapper;
-    private readonly IGoalService _goalService;
+    private readonly IReportService _reportService;
 
-    public GoalController(
-        IGoalService goalService,
+    public ReportController(
+        IReportService reportService,
         IMapper mapper
         )
     {
-        _goalService = goalService;
+        _reportService = reportService;
         _mapper = mapper;
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Create a new goal", Description = "Creates a new goal with the provided details.")]
-    [SwaggerResponse(200, "Goal created successfully")]
+    [SwaggerOperation(Summary = "Create a new report", Description = "Creates a new report with the provided details.")]
+    [SwaggerResponse(200, "Report created successfully")]
     [SwaggerResponse(400, "Invalid input data")]
-    public async Task<IActionResult> CreateGoal([FromBody] AddGoalRequest request)
+    public async Task<IActionResult> CreateReport([FromBody] AddReportRequest request)
     {
-        var goalResult = await _goalService.AddGoal(request, HttpContext.RequestAborted);
+        var goalResult = await _reportService.AddReport(request);
 
         return goalResult.Match(
             goalResult => Ok(_mapper.Map<GoalResponse>(goalResult)),
