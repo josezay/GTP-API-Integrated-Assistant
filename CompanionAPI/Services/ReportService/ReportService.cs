@@ -30,8 +30,7 @@ public class ReportService : IReportService
 
         var report = Report.Create(request.Query);
 
-        var response =  _openAiService.CallAI(report.Query);
-
+        _openAiService.CallAI(report.Query);
 
         user.AddReport(report);
 

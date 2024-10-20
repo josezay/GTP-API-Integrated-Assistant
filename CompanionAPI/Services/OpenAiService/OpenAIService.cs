@@ -22,8 +22,8 @@ public class OpenAIService : IOpenAiService
     public string CallAI(string message)
     {
         // Define the initial prompt and context instructions  
-        string initialPrompt = "Calcule o consumo de nutrientes com base nas entradas fornecidas pelo usuário, e estimando (Não calculando) quanto de cada nutriente o alimento informado possui.\r\n\r\n# Steps\r\n\r\n1. Receba a lista de alimentos consumidas pelo usuário.\r\n2. Caso não seja informada a quantidade desses alimentos, faça uma estimativa da mesma.\r\n3. Identifique os nutrientes e suas quantidades estimadas em cada alimento, utilizando uma base de referência nutricional.\r\n4. Calcule o total de cada nutriente com base nas informações fornecidas.\r\n5. Compare o consumo total de nutrientes com as necessidades diárias recomendadas.\r\n\r\n# Output Format\r\n\r\nApós descoberta uma entrada de nutrientes forneça uma resposta em padrão JSON que inclua: \r\n- Nome do alimento.\r\n- Quantidade consumida.\r\n- Quantidades de cada nutriente.\r\n\r\n{\r\n  \"datetime\": \"2024-10-01T12:00:00Z\",\r\n  \"name\": \"Chicken Breast\",\r\n  \"quantity\": \"200g\",\r\n  \"calories\": 330,\r\n  \"proteins\": 62\r\n}\r\n\r\n# Examples\r\n\r\n**Input:** \r\n- Alimentos: [Maçã, Frango, 200g; Pizza]\r\n\r\n**Processamento**\r\n-Maçã tem 200g (estimativa), frango com 200g, e uma pizza tem 400g (estimativa de uma pizza inteira).\r\n\r\n**Output:**\r\n- Nutriente: Vitamina C\r\n  - Quantidade consumida: X mg\r\n  - Porcentagem das necessidades diárias: Y%\r\n- Nutriente: Proteína\r\n  - Quantidade consumida: X g\r\n  - Porcentagem das necessidades diárias: Y%\r\n- Nutriente: Ferro\r\n  - Quantidade consumida: X mg\r\n  - Porcentagem das necessidades diárias: Y%\r\n\r\n# Notes\r\n\r\n- Não responder a nada não relacionado aos tópicos acima.\r\n";
-        string fullPrompt = $"{initialPrompt}\n\nUsuário: {message}\nNutricionista:";
+        string assistantInstruction = "Calcule o consumo de nutrientes com base nas entradas fornecidas pelo usuário, e estimando (Não calculando) quanto de cada nutriente o alimento informado possui.\r\n\r\n# Steps\r\n\r\n1. Receba a lista de alimentos consumidas pelo usuário.\r\n2. Caso não seja informada a quantidade desses alimentos, faça uma estimativa da mesma.\r\n3. Identifique os nutrientes e suas quantidades estimadas em cada alimento, utilizando uma base de referência nutricional.\r\n4. Calcule o total de cada nutriente com base nas informações fornecidas.\r\n5. Compare o consumo total de nutrientes com as necessidades diárias recomendadas.\r\n\r\n# Output Format\r\n\r\nApós descoberta uma entrada de nutrientes forneça uma resposta em padrão JSON que inclua: \r\n- Nome do alimento.\r\n- Quantidade consumida.\r\n- Quantidades de cada nutriente.\r\n\r\n{\r\n  \"datetime\": \"2024-10-01T12:00:00Z\",\r\n  \"name\": \"Chicken Breast\",\r\n  \"quantity\": \"200g\",\r\n  \"calories\": 330,\r\n  \"proteins\": 62\r\n}\r\n\r\n# Examples\r\n\r\n**Input:** \r\n- Alimentos: [Maçã, Frango, 200g; Pizza]\r\n\r\n**Processamento**\r\n-Maçã tem 200g (estimativa), frango com 200g, e uma pizza tem 400g (estimativa de uma pizza inteira).\r\n\r\n**Output:**\r\n- Nutriente: Vitamina C\r\n  - Quantidade consumida: X mg\r\n  - Porcentagem das necessidades diárias: Y%\r\n- Nutriente: Proteína\r\n  - Quantidade consumida: X g\r\n  - Porcentagem das necessidades diárias: Y%\r\n- Nutriente: Ferro\r\n  - Quantidade consumida: X mg\r\n  - Porcentagem das necessidades diárias: Y%\r\n\r\n# Notes\r\n\r\n- Não responder a nada não relacionado aos tópicos acima.\r\n";
+        string fullPrompt = $"Usuário: {message}\nNutricionista:";
 
         // Define the function tool for saving nutrient report  
         const string SaveNutrientReportFunctionName = "save_nutrient_report";
@@ -67,11 +67,12 @@ public class OpenAIService : IOpenAiService
         AssistantCreationOptions assistantOptions = new()
         {
             Name = "Nutrient Calculation Assistant",
-            Instructions = "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous.",
+            Instructions = assistantInstruction,
             Tools = { saveNutrientReportTool }
         };
 
-        Assistant assistant = _client.CreateAssistant(_openAISettings.Model, assistantOptions);
+       // Assistant assistant = _client.CreateAssistant(_openAISettings.Model, assistantOptions);
+        //Assistant assistant = _client.GetAssistant(assistant.Id);
 
         // Create a thread with an initial user message and run it  
         ThreadCreationOptions threadOptions = new()

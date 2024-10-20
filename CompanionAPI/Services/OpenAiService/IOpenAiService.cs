@@ -1,4 +1,6 @@
-﻿namespace CompanionAPI.Services.ReportService;
+﻿using CompanionAPI.Entities;
+
+namespace CompanionAPI.Services.ReportService;
 
 public interface IOpenAiService
 {
