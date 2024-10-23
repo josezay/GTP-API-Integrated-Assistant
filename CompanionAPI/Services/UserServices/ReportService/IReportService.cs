@@ -2,7 +2,7 @@
 using CompanionAPI.Entities;
 using ErrorOr;
 
-namespace CompanionAPI.Services.ReportService;
+namespace CompanionAPI.Services.UserServices.ReportService;
 
 public interface IReportService
 {

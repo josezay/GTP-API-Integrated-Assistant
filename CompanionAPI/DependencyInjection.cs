@@ -1,10 +1,11 @@
 ﻿using CompanionAPI.Common.Errors;
-using CompanionAPI.Contracts.AppSettings;
 using CompanionAPI.Repositories.UserRepository;
-using CompanionAPI.Services.GoalService;
-using CompanionAPI.Services.OnboardService;
-using CompanionAPI.Services.OpenAiService;
-using CompanionAPI.Services.ReportService;
+using CompanionAPI.Services.AiService;
+using CompanionAPI.Services.UserServices.GoalService;
+using CompanionAPI.Services.UserServices.MealService;
+using CompanionAPI.Services.UserServices.OnboardService;
+using CompanionAPI.Services.UserServices.ReportService;
+using CompanionAPI.Settings.AppSettings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Google.Apis.Auth.OAuth2;
@@ -50,10 +51,11 @@ public static class DependencyInjection
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<IAIService, AIService>();
         services.AddScoped<IGoalService, GoalService>();
+        services.AddScoped<IMealService, MealService>();
         services.AddScoped<IOnboardService, OnboardingService>();
         services.AddScoped<IReportService, ReportService>();
-        services.AddScoped<IOpenAiService, OpenAIService>();
 
         return services;
     }

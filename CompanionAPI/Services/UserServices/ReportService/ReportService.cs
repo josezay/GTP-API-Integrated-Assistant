@@ -2,18 +2,19 @@
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
+using CompanionAPI.Services.AiService;
 using ErrorOr;
 
-namespace CompanionAPI.Services.ReportService;
+namespace CompanionAPI.Services.UserServices.ReportService;
 
 public class ReportService : IReportService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IOpenAiService _openAiService;
+    private readonly IAIService _openAiService;
 
     public ReportService(
             IUserRepository userRepository,
-            IOpenAiService openAiService
+            IAIService openAiService
         )
     {
         _userRepository = userRepository;
@@ -30,7 +31,11 @@ public class ReportService : IReportService
 
         var report = Report.Create(request.Query);
 
-        _openAiService.CallAI(report.Query);
+        var airesponse = await _openAiService.CallAI(user.Id, report.Query);
+        if (airesponse.IsError)
+        {
+            return airesponse.Errors;
+        }
 
         user.AddReport(report);
 

@@ -1,6 +1,6 @@
 ﻿using CompanionAPI.Contracts.GoalContracts;
 using CompanionAPI.Contracts.ReportContracts;
-using CompanionAPI.Services.ReportService;
+using CompanionAPI.Services.UserServices.ReportService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

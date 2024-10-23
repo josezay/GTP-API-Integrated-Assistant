@@ -2,7 +2,7 @@
 using CompanionAPI.Entities;
 using ErrorOr;
 
-namespace CompanionAPI.Services.OnboardService;
+namespace CompanionAPI.Services.UserServices.OnboardService;
 
 public interface IOnboardService
 {

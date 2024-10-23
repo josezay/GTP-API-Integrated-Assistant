@@ -4,7 +4,7 @@ using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
 using ErrorOr;
 
-namespace CompanionAPI.Services.GoalService;
+namespace CompanionAPI.Services.UserServices.GoalService;
 
 public class GoalService : IGoalService
 {
