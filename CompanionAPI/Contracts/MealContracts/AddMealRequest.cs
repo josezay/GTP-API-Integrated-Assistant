@@ -3,8 +3,8 @@
 public record AddMealRequest(
     string UserId,
     string Name,
-    int Quantity,
-    int Calories,
-    int Proteins,
+    double Quantity,
+    double Calories,
+    double Proteins,
     string Unit
 );

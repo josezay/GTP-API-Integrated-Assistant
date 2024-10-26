@@ -37,34 +37,34 @@ public class AIService : IAIService
             FunctionName = SaveNutrientReportFunctionName,
             Description = "Save the nutrient report",
             Parameters = BinaryData.FromString("""  
-                {  
-                   "type": "object",  
-                   "properties": {
-                        "name": {  
-                            "type": "string",  
-                            "description": "The name of the food item."  
-                        },  
-                        "quantity": {  
-                            "type": "number",  
-                            "description": "The amount of food consumed."  
-                        },
-                        "unit": {  
-                            "type": "string",  
-                            "description": "The unit of the quantity (e.g., ml, g)."  
-                        },
-                        "calories": {  
-                            "type": "number",  
-                            "description": "The number of calories in the consumed quantity."  
-                        },  
-                        "proteins": {  
-                            "type": "number",  
-                            "description": "The amount of protein in the consumed quantity."  
-                        }  
-                   },  
-                   "required": [ "datetime", "name", "quantity", "calories", "proteins" ],  
-                   "additionalProperties": false  
-                }  
-                """)
+            {  
+               "type": "object",  
+               "properties": {
+                    "name": {  
+                        "type": "string",  
+                        "description": "The name of the food item."  
+                    },  
+                    "quantity": {  
+                        "type": "number",  
+                        "description": "The amount of food consumed."  
+                    },
+                    "unit": {  
+                        "type": "string",  
+                        "description": "The unit of the quantity (e.g., ml, g)."  
+                    },
+                    "calories": {  
+                        "type": "number",  
+                        "description": "The number of calories in the consumed quantity."  
+                    },  
+                    "proteins": {  
+                        "type": "number",  
+                        "description": "The amount of protein in the consumed quantity."  
+                    }
+               },  
+               "required": [ "name", "quantity", "unit", "calories", "proteins" ],  
+               "additionalProperties": false  
+            }  
+            """)
         };
     }
 
@@ -121,11 +121,13 @@ public class AIService : IAIService
                                     PropertyNameCaseInsensitive = true
                                 };
 
-                                var addMealRequest = JsonSerializer.Deserialize<AddMealRequest>(argumentsJson.RootElement.GetRawText(), options);
+                                var mealDto = JsonSerializer.Deserialize<MealDto>(argumentsJson.RootElement.GetRawText(), options);
 
+                                // Use the MealDto to create a Meal instance
+                                var mealrequest = new AddMealRequest(userId, mealDto.Name, mealDto.Quantity, mealDto.Calories, mealDto.Proteins, mealDto.Unit);
 
                                 // Save the nutrient report 
-                                await _mealService.AddMeal(userId, addMealRequest);
+                                await _mealService.AddMeal(userId, mealrequest);
 
                                 toolOutputs.Add(new ToolOutput(action.ToolCallId, "Nutrient report saved successfully."));
                                 break;
@@ -159,5 +161,14 @@ public class AIService : IAIService
         }
 
         throw new NotImplementedException(run.Status.ToString());
+    }
+
+    public class MealDto
+    {
+        public string Name { get; set; }
+        public double Calories { get; set; }
+        public double Proteins { get; set; }
+        public double Quantity { get; set; }
+        public string Unit { get; set; }
     }
 }

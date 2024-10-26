@@ -9,13 +9,13 @@ public class Meal
     public string Name { get; private set; }
 
     [FirestoreProperty]
-    public int Calories { get; private set; }
+    public double Calories { get; private set; }
 
     [FirestoreProperty]
-    public int Proteins { get; private set; }
+    public double Proteins { get; private set; }
 
     [FirestoreProperty]
-    public int Quantity { get; private set; }
+    public double Quantity { get; private set; }
 
     [FirestoreProperty]
     public string Unit { get; private set; }
@@ -27,9 +27,9 @@ public class Meal
 
     private Meal(
         string name,
-        int calories,
-        int proteins,
-        int quantity,
+        double calories,
+        double proteins,
+        double quantity,
         string unit,
         DateTime createdAt)
     {
@@ -43,9 +43,9 @@ public class Meal
 
     public static Meal Create(
         string name,
-        int calories,
-        int proteins,
-        int quantity,
+        double calories,
+        double proteins,
+        double quantity,
         string unit)
     {
         DateTime createdAt = DateTime.UtcNow;

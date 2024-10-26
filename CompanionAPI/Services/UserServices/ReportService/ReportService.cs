@@ -31,17 +31,16 @@ public class ReportService : IReportService
 
         var report = Report.Create(request.Query);
 
+        user.AddReport(report);
+
+        await _userRepository.UpdateUserAsync(user);
+
         var airesponse = await _openAiService.CallAI(user.Id, report.Query);
         if (airesponse.IsError)
         {
             return airesponse.Errors;
         }
 
-        user.AddReport(report);
-
-        await _userRepository.UpdateUserAsync(user);
-
-
-        return default!;
+        return report;
     }
 }
