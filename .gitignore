@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /CompanionAPI/appsettings.json
 /CompanionAPI/Properties/serviceAccountKey.json
+/CompanionAPI/appsettings.Development.json

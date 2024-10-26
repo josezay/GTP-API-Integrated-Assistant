@@ -41,12 +41,15 @@ public class User
     [FirestoreProperty]
     public List<Report> Reports { get; private set; }
 
+    [FirestoreProperty]
+    public List<Meal> Meals { get; private set; }
 
     public User()
     {
         Goals = [];
         Activities = [];
         Reports = [];
+        Meals = [];
     }
 
     private User(
@@ -71,6 +74,7 @@ public class User
         Goals = [];
         Activities = activities ?? [];
         Reports = [];
+        Meals = [];
     }
 
     public static User Onboard(
@@ -102,5 +106,10 @@ public class User
     public void AddReport(Report report)
     {
         Reports.Add(report);
+    }
+
+    public void AddMeal(Meal meal)
+    {
+        Meals.Add(meal);
     }
 }

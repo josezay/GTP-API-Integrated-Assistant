@@ -1,8 +1,8 @@
-﻿using CompanionAPI.Contracts.GoalContracts;
+﻿using CompanionAPI.Contracts.ReportContracts;
 using CompanionAPI.Entities;
 using ErrorOr;
 
-namespace CompanionAPI.Services.GoalService;
+namespace CompanionAPI.Services.UserServices.ReportService;
 
 public interface IReportService
 {

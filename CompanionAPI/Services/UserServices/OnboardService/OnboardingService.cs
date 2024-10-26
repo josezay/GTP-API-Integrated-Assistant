@@ -2,10 +2,10 @@
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
-using CompanionAPI.Services.GoalService;
+using CompanionAPI.Services.UserServices.GoalService;
 using ErrorOr;
 
-namespace CompanionAPI.Services.OnboardService;
+namespace CompanionAPI.Services.UserServices.OnboardService;
 
 public class OnboardingService : IOnboardService
 {

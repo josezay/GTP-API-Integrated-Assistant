@@ -2,7 +2,7 @@
 using CompanionAPI.Entities;
 using ErrorOr;
 
-namespace CompanionAPI.Services.GoalService;
+namespace CompanionAPI.Services.UserServices.GoalService;
 
 public interface IGoalService
 {

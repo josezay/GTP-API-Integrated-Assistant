@@ -1,19 +1,24 @@
-﻿using CompanionAPI.Contracts.GoalContracts;
+﻿using CompanionAPI.Contracts.ReportContracts;
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
+using CompanionAPI.Services.AiService;
 using ErrorOr;
 
-namespace CompanionAPI.Services.GoalService;
+namespace CompanionAPI.Services.UserServices.ReportService;
 
 public class ReportService : IReportService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IAIService _openAiService;
+
     public ReportService(
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IAIService openAiService
         )
     {
         _userRepository = userRepository;
+        _openAiService = openAiService;
     }
 
     public async Task<ErrorOr<Report>> AddReport(AddReportRequest request)
@@ -26,12 +31,16 @@ public class ReportService : IReportService
 
         var report = Report.Create(request.Query);
 
-
         user.AddReport(report);
 
         await _userRepository.UpdateUserAsync(user);
 
+        var airesponse = await _openAiService.CallAI(user.Id, report.Query);
+        if (airesponse.IsError)
+        {
+            return airesponse.Errors;
+        }
 
-        return default!;
+        return report;
     }
 }

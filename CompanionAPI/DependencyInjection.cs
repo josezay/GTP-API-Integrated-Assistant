@@ -1,7 +1,11 @@
 ﻿using CompanionAPI.Common.Errors;
 using CompanionAPI.Repositories.UserRepository;
-using CompanionAPI.Services.GoalService;
-using CompanionAPI.Services.OnboardService;
+using CompanionAPI.Services.AiService;
+using CompanionAPI.Services.UserServices.GoalService;
+using CompanionAPI.Services.UserServices.MealService;
+using CompanionAPI.Services.UserServices.OnboardService;
+using CompanionAPI.Services.UserServices.ReportService;
+using CompanionAPI.Settings.AppSettings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Google.Apis.Auth.OAuth2;
@@ -16,7 +20,7 @@ namespace CompanionAPI;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection ProjectStartup(this IServiceCollection services)
+    public static IServiceCollection ProjectStartup(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddServices()
@@ -25,6 +29,7 @@ public static class DependencyInjection
             .AddControllersDeps()
             .AddMappings()
             .AddSwagger()
+            .AddConfig(configuration)
             .AddPersistence();
 
         return services;
@@ -37,9 +42,18 @@ public static class DependencyInjection
         return services;
     }
 
+    private static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<OpenAISettings>(configuration.GetSection("OpenAI"));
+
+        return services;
+    }
+
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<IAIService, AIService>();
         services.AddScoped<IGoalService, GoalService>();
+        services.AddScoped<IMealService, MealService>();
         services.AddScoped<IOnboardService, OnboardingService>();
         services.AddScoped<IReportService, ReportService>();
 

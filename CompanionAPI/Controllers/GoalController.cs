@@ -1,5 +1,5 @@
 ﻿using CompanionAPI.Contracts.GoalContracts;
-using CompanionAPI.Services.GoalService;
+using CompanionAPI.Services.UserServices.GoalService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
