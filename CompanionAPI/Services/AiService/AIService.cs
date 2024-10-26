@@ -70,7 +70,14 @@ public class AIService : IAIService
 
     public ErrorOr<CreateAssistantResponse> CreateAssistant()
     {
-        string assistantInstruction = "Calcule o consumo de nutrientes com base nas entradas fornecidas pelo usuário, e estimando (Não calculando) quanto de cada nutriente o alimento informado possui.\r\n\r\n# Steps\r\n\r\n1. Receba a lista de alimentos consumidas pelo usuário.\r\n2. Caso não seja informada a quantidade desses alimentos, faça uma estimativa da mesma.\r\n3. Identifique os nutrientes e suas quantidades estimadas em cada alimento, utilizando uma base de referência nutricional.\r\n4. Calcule o total de cada nutriente com base nas informações fornecidas.\r\n5. Compare o consumo total de nutrientes com as necessidades diárias recomendadas.\r\n\r\n# Output Format\r\n\r\nApós descoberta uma entrada de nutrientes forneça uma resposta em padrão JSON que inclua: \r\n- Nome do alimento.\r\n- Quantidade consumida.\r\n- Quantidades de cada nutriente.\r\n\r\n{\r\n  \"name\": \"Chicken Breast\",\r\n  \"quantity\": \"200\",\r\n  \"calories\": 330,\r\n  \"proteins\": 62\r\n}\r\n\r\n# Examples\r\n\r\n**Input:** \r\n- Alimentos: [Maçã, Frango, 200g; Pizza]\r\n\r\n**Processamento**\r\n-Maçã tem 200g (estimativa), frango com 200g, e uma pizza tem 400g (estimativa de uma pizza inteira).\r\n\r\n**Output:**\r\n- Nutriente: Vitamina C\r\n  - Quantidade consumida: X mg\r\n  - Porcentagem das necessidades diárias: Y%\r\n- Nutriente: Proteína\r\n  - Quantidade consumida: X g\r\n  - Porcentagem das necessidades diárias: Y%\r\n- Nutriente: Ferro\r\n  - Quantidade consumida: X mg\r\n  - Porcentagem das necessidades diárias: Y%\r\n\r\n# Notes\r\n\r\n- Não responder a nada não relacionado aos tópicos acima.\r\n";
+        string assistantInstruction = "" +
+            "Calcule o consumo de nutrientes com base nas entradas fornecidas pelo usuário, " +
+            " e estimando (Não calculando) quanto de cada nutriente o alimento informado possui. " +
+            "# Steps " +
+            "1. Receba a lista de alimentos consumidas pelo usuário. " +
+            "2. Caso não seja informada a quantidade desses alimentos, as estime. " +
+            "3. Identifique as calorias, proteínas e suas quantidades estimadas em cada alimento chamando saveNutrientReportTool " +
+            "4. Apenas chamar a saveNutrientReportTool e mais nada além disso.\r\n";
 
         AssistantCreationOptions assistantOptions = new()
         {
@@ -135,7 +142,8 @@ public class AIService : IAIService
 
                         default:
                             {
-                                // Handle other or unexpected calls  
+                                var a = JsonSerializer.Deserialize<Dictionary<string, object>>(action.FunctionArguments);
+                                var b = action.FunctionName;
                                 throw new NotImplementedException();
                             }
                     }
