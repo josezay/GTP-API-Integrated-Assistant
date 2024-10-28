@@ -27,7 +27,7 @@ public class AIController : ApiController
     [SwaggerOperation(Summary = "Create a new assistant", Description = "Creates a new assistant with the provided details.")]
     [SwaggerResponse(200, "Assistant created successfully")]
     [SwaggerResponse(400, "Invalid input data")]
-    public async Task<IActionResult> CreateAssistant()
+    public IActionResult CreateAssistant()
     {
         var assistantResponse =  _aiService.CreateAssistant();
 
