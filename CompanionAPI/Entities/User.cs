@@ -111,5 +111,6 @@ public class User
     public void AddMeal(Meal meal)
     {
         Meals.Add(meal);
+
     }
 }

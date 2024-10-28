@@ -2,7 +2,6 @@
 using CompanionAPI.Repositories.UserRepository;
 using CompanionAPI.Services.AiService;
 using CompanionAPI.Services.UserServices.GoalService;
-using CompanionAPI.Services.UserServices.MealService;
 using CompanionAPI.Services.UserServices.OnboardService;
 using CompanionAPI.Services.UserServices.ReportService;
 using CompanionAPI.Settings.AppSettings;
@@ -53,7 +52,6 @@ public static class DependencyInjection
     {
         services.AddScoped<IAIService, AIService>();
         services.AddScoped<IGoalService, GoalService>();
-        services.AddScoped<IMealService, MealService>();
         services.AddScoped<IOnboardService, OnboardingService>();
         services.AddScoped<IReportService, ReportService>();
 
