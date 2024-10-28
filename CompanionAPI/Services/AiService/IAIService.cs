@@ -6,5 +6,5 @@ namespace CompanionAPI.Services.AiService;
 public interface IAIService
 {
     ErrorOr<CreateAssistantResponse> CreateAssistant();
-    Task<ErrorOr<string>> CallAI(string userId, string message);
+    Task<ErrorOr<object>> CallAI(string message);
 }

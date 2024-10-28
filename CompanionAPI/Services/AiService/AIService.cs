@@ -91,7 +91,7 @@ public class AIService : IAIService
         return createAssistantResponse;
     }
 
-    public async Task<ErrorOr<string>> CallAI(string userId, string message)
+    public async Task<ErrorOr<object>> CallAI(string message)
     {
         string fullPrompt = $"Usuário: {message}\nNutricionista:";
 
@@ -105,13 +105,15 @@ public class AIService : IAIService
 
         ThreadRun run = _client.CreateThreadAndRun(assistant.Id, threadOptions);
 
-        // Poll the run until it is no longer queued or in progress  
+        List<object> createdItems = new();
+
+        // Poll the run until it is no longer queued or in progress
         while (!run.Status.IsTerminal)
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
             run = _client.GetRun(run.ThreadId, run.Id);
 
-            // If the run requires action, resolve them  
+            // If the run requires action, resolve them
             if (run.Status == RunStatus.RequiresAction)
             {
                 List<ToolOutput> toolOutputs = new();
@@ -130,11 +132,9 @@ public class AIService : IAIService
 
                                 var mealDto = JsonSerializer.Deserialize<MealDto>(argumentsJson.RootElement.GetRawText(), options);
 
-                                // Use the MealDto to create a Meal instance
-                                var mealrequest = new AddMealRequest(userId, mealDto.Name, mealDto.Quantity, mealDto.Calories, mealDto.Proteins, mealDto.Unit);
+                                var createdMeal = Meal.Create(mealDto.Name, mealDto.Quantity, mealDto.Calories, mealDto.Proteins, mealDto.Unit);
 
-                                // Save the nutrient report 
-                                await _mealService.AddMeal(userId, mealrequest);
+                                createdItems.Add(createdMeal);
 
                                 toolOutputs.Add(new ToolOutput(action.ToolCallId, "Nutrient report saved successfully."));
                                 break;
@@ -154,17 +154,11 @@ public class AIService : IAIService
             }
         }
 
-        // With the run complete, return the final message content  
         if (run.Status == RunStatus.Completed)
         {
-            var messages = _client.GetMessages(run.ThreadId, new MessageCollectionOptions() { Order = MessageCollectionOrder.Ascending });
-
-            foreach (var msg in messages)
+            if (createdItems.Any())
             {
-                if (msg.Role == MessageRole.Assistant)
-                {
-                    return msg.Content[0].Text;
-                }
+                return createdItems;
             }
         }
 
