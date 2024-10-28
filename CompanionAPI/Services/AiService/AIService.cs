@@ -15,18 +15,15 @@ public class AIService : IAIService
 #pragma warning disable OPENAI001
     private readonly AssistantClient _client;
     private readonly OpenAISettings _openAISettings;
-    private readonly IMealService _mealService;
 
     private const string SaveNutrientReportFunctionName = "save_nutrient_report";
     private FunctionToolDefinition saveNutrientReportTool;
 
     public AIService(
-        IOptions<OpenAISettings> settings,
-        IMealService mealService)
+        IOptions<OpenAISettings> settings)
     {
         _openAISettings = settings.Value;
         _client = new AssistantClient(apiKey: _openAISettings.ApiKey);
-        _mealService = mealService;
         InitializeAssistant();
     }
 
