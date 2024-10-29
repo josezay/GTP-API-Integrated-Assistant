@@ -1,10 +1,10 @@
-﻿using CompanionAPI.Contracts.ReportContracts;
-using CompanionAPI.Entities;
+﻿using CompanionAPI.Contracts.GoalContracts;
+using CompanionAPI.Contracts.ReportContracts;
 using ErrorOr;
 
 namespace CompanionAPI.Services.UserServices.ReportService;
 
 public interface IReportService
 {
-    Task<ErrorOr<Report>> AddReport(AddReportRequest request);
+    Task<ErrorOr<AddReportResponse>> AddReport(AddReportRequest request);
 }
