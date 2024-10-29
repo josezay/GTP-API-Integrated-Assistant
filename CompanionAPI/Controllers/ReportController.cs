@@ -28,10 +28,10 @@ public class ReportController : ApiController
     [SwaggerResponse(400, "Invalid input data")]
     public async Task<IActionResult> CreateReport([FromBody] AddReportRequest request)
     {
-        var goalResult = await _reportService.AddReport(request);
+        var addReportResult = await _reportService.AddReport(request);
 
-        return goalResult.Match(
-            goalResult => Ok(_mapper.Map<GoalResponse>(goalResult)),
+        return addReportResult.Match(
+            addReportResult => Ok(addReportResult),
             errors => Problem(errors));
     }
 }

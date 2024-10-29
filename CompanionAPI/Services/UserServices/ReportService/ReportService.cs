@@ -1,4 +1,5 @@
-﻿using CompanionAPI.Contracts.ReportContracts;
+﻿using CompanionAPI.Contracts.GoalContracts;
+using CompanionAPI.Contracts.ReportContracts;
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
@@ -21,7 +22,7 @@ public class ReportService : IReportService
         _openAiService = openAiService;
     }
 
-    public async Task<ErrorOr<Report>> AddReport(AddReportRequest request)
+    public async Task<ErrorOr<AddReportResponse>> AddReport(AddReportRequest request)
     {
         var userResult = await GetUserByIdAsync(request.UserId);
         if (userResult.IsError)
@@ -38,11 +39,11 @@ public class ReportService : IReportService
             return aiResponse.Errors;
         }
 
-        ProcessAIResponse(user, aiResponse.Value);
+        var addReportResponse = ProcessAIResponse(user, aiResponse.Value);
 
         await _userRepository.UpdateUserAsync(user);
 
-        return report;
+        return addReportResponse;
     }
 
     private async Task<ErrorOr<User>> GetUserByIdAsync(string userId)
@@ -62,8 +63,11 @@ public class ReportService : IReportService
         return report;
     }
 
-    private void ProcessAIResponse(User user, object aiResponse)
+    private AddReportResponse ProcessAIResponse(User user, object aiResponse)
     {
+        AddReportMealResponse? mealResponse = null;
+        AddReportGoalResponse? goalResponse = null;
+
         if (aiResponse is List<object> responseList)
         {
             foreach (var item in responseList)
@@ -71,17 +75,26 @@ public class ReportService : IReportService
                 if (item is Meal meal)
                 {
                     user.AddMeal(meal);
+                    mealResponse = CreateMealResponse(meal);
                 }
                 else if (item is Goal goal)
                 {
                     user.AddGoal(goal);
+                    goalResponse = CreateGoalResponse(goal);
                 }
-                else if (item is Report report)
-                {
-                    user.AddReport(report);
-                }
-                // Handle other types if necessary
             }
         }
+
+        return new AddReportResponse(mealResponse, goalResponse);
+    }
+
+    private AddReportMealResponse CreateMealResponse(Meal meal)
+    {
+        return new AddReportMealResponse((int)meal.Calories, (int)meal.Proteins);
+    }
+
+    private AddReportGoalResponse CreateGoalResponse(Goal goal)
+    {
+        return new AddReportGoalResponse(goal.Calories, goal.Proteins);
     }
 }
