@@ -43,7 +43,7 @@ public class AIService : IAIService
                     },  
                     "quantity": {  
                         "type": "number",  
-                        "description": "The amount of food consumed."  
+                        "description": "The amount (in provided unit) of food consumed."  
                     },
                     "unit": {  
                         "type": "string",  
@@ -51,11 +51,11 @@ public class AIService : IAIService
                     },
                     "calories": {  
                         "type": "number",  
-                        "description": "The number of calories in the consumed quantity."  
+                        "description": "The aproximated number of calories in the food item."  
                     },  
                     "proteins": {  
                         "type": "number",  
-                        "description": "The amount of protein in the consumed quantity."  
+                        "description": "The aproximated number of proteins in the food item."  
                     }
                },  
                "required": [ "name", "quantity", "unit", "calories", "proteins" ],  
@@ -68,13 +68,16 @@ public class AIService : IAIService
     public ErrorOr<CreateAssistantResponse> CreateAssistant()
     {
         string assistantInstruction = "" +
-            "Calcule o consumo de nutrientes com base nas entradas fornecidas pelo usuário, " +
-            " e estimando (Não calculando) quanto de cada nutriente o alimento informado possui. " +
+            "Calcule o consumo de nutrientes com base nas entradas de alimentação fornecidas pelo usuário, " +
+            "estimando (não calculando) quanto de proteínas e calorias o alimento informado possui. " +
             "# Steps " +
-            "1. Receba a lista de alimentos consumidas pelo usuário. " +
-            "2. Caso não seja informada a quantidade desses alimentos, as estime. " +
-            "3. Identifique as calorias, proteínas e suas quantidades estimadas em cada alimento chamando saveNutrientReportTool " +
-            "4. Apenas chamar a saveNutrientReportTool e mais nada além disso.\r\n";
+            "1. Receba a lista de alimentos (ou um alimento) consumidos pelo usuário. " +
+            "2. Caso não seja informada a quantidade (peso, volume) desses alimentos, estime-a. " +
+            "3. Identifique as calorias, proteínas e suas quantidades estimadas em cada alimento chamando saveNutrientReportTool, " +
+            "passando o nome da comida consumida, a quantidade (volume, peso) estimada consumida, e as quantidades de proteínas e calorias totais que provavelmente o alimento possui. " +
+            "4. Utilize uma base de dados confiável para obter as informações nutricionais dos alimentos. " +
+            "5. Apenas chame a saveNutrientReportTool e nada mais.\r\n";
+
 
         AssistantCreationOptions assistantOptions = new()
         {
@@ -129,7 +132,12 @@ public class AIService : IAIService
 
                                 var mealDto = JsonSerializer.Deserialize<MealDto>(argumentsJson.RootElement.GetRawText(), options);
 
-                                var createdMeal = Meal.Create(mealDto.Name, mealDto.Quantity, mealDto.Calories, mealDto.Proteins, mealDto.Unit);
+                                var createdMeal = Meal.Create(
+                                        name: mealDto.Name,
+                                        quantity: mealDto.Quantity,
+                                        calories: mealDto.Calories,
+                                        proteins: mealDto.Proteins,
+                                        unit: mealDto.Unit);
 
                                 createdItems.Add(createdMeal);
 
