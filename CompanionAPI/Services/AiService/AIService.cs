@@ -1,7 +1,5 @@
 ﻿using CompanionAPI.Contracts.AIContracts;
-using CompanionAPI.Contracts.MealContracts;
 using CompanionAPI.Entities;
-using CompanionAPI.Services.UserServices.GoalService;
 using CompanionAPI.Settings.AppSettings;
 using ErrorOr;
 using Microsoft.Extensions.Options;
