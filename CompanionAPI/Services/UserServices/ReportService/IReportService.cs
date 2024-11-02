@@ -1,5 +1,4 @@
-﻿using CompanionAPI.Contracts.GoalContracts;
-using CompanionAPI.Contracts.ReportContracts;
+﻿using CompanionAPI.Contracts.ReportContracts;
 using ErrorOr;
 
 namespace CompanionAPI.Services.UserServices.ReportService;

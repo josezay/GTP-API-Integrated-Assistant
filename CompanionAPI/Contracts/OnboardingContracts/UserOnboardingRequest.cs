@@ -9,5 +9,6 @@ public record UserOnboardingRequest(
     int Age,
     int Height,
     int Weight,
-    List<ActivityRequest>? Activities
+    List<ActivityRequest>? Activities,
+    double ActivityFactor
 );
