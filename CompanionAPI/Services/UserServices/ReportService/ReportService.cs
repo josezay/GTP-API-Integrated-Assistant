@@ -1,5 +1,4 @@
-﻿using CompanionAPI.Contracts.GoalContracts;
-using CompanionAPI.Contracts.ReportContracts;
+﻿using CompanionAPI.Contracts.ReportContracts;
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;

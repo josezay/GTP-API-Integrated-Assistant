@@ -1,4 +1,4 @@
-﻿namespace CompanionAPI.Contracts.GoalContracts;
+﻿namespace CompanionAPI.Contracts.ReportContracts;
 
 public record AddReportGoalResponse(
     int Calories,
