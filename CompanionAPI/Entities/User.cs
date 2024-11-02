@@ -47,6 +47,10 @@ public class User
     [FirestoreProperty]
     public List<DailySummary> DailySummary { get; private set; }
 
+    [FirestoreProperty]
+    public double ActivityFactor { get; private set; }
+
+
     public User()
     {
         Goals = [];
@@ -65,7 +69,8 @@ public class User
         double weight,
         DateTime createdAt,
         bool firstLogin,
-        List<Activity> activities)
+        List<Activity> activities,
+        double activityFactor)
     {
         Name = name;
         Email = email;
@@ -75,6 +80,7 @@ public class User
         Weight = weight;
         CreatedAt = createdAt;
         FirstLogin = firstLogin;
+        ActivityFactor = activityFactor;
         Goals = [];
         Activities = activities ?? [];
         Reports = [];
@@ -88,7 +94,8 @@ public class User
         int age,
         double height,
         double weight,
-        List<Activity> activities)
+        List<Activity> activities,
+        double activityFactor)
     {
         return new User(
             name,
@@ -99,7 +106,8 @@ public class User
             weight,
             DateTime.UtcNow,
             true,
-            activities);
+            activities,
+            activityFactor);
     }
 
     public void AddGoal(Goal goal)

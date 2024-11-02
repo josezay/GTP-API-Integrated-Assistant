@@ -65,7 +65,8 @@ public class OnboardingService : IOnboardService
             request.Age,
             request.Height,
             request.Weight,
-            activities
+            activities,
+            request.ActivityFactor
         );
     }
 
