@@ -1,6 +1,6 @@
 ﻿namespace CompanionAPI.Contracts.ReportContracts;
 
 public record AddReportResponse(
-    AddReportMealResponse? Meal,
+    List<AddReportMealResponse> Meals,
     AddReportGoalResponse? Goal
 );
