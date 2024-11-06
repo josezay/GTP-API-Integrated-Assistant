@@ -90,17 +90,20 @@ public class ReportService : IReportService
                 }
                 else if (item is WeightDto weightDto)
                 {
-                    user.UpdateWeight(weightDto.weight);
-                    var goal = _goalService.CalcGoal(user);
-
-                    if (goal.IsError)
+                    if(weightDto.weight > 0)
                     {
-                        return goal.Errors;
+                        user.UpdateWeight(weightDto.weight ?? 0);
+                        var goal = _goalService.CalcGoal(user);
+
+                        if (goal.IsError)
+                        {
+                            return goal.Errors;
+                        }
+
+                        user.AddGoal(goal.Value);
+
+                        goalResponse = CreateGoalResponse(goal.Value);
                     }
-
-                    user.AddGoal(goal.Value);
-
-                    goalResponse = CreateGoalResponse(goal.Value);
                 }
             }
         }
@@ -110,7 +113,7 @@ public class ReportService : IReportService
 
     private AddReportMealResponse CreateMealResponse(Meal meal)
     {
-        return new AddReportMealResponse((int)meal.Calories, (int)meal.Proteins);
+        return new AddReportMealResponse(meal.Name, (int)meal.Calories, (int)meal.Proteins);
     }
 
     private AddReportGoalResponse CreateGoalResponse(Goal goal)
