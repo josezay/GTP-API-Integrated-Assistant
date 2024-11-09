@@ -1,9 +1,9 @@
 ﻿namespace CompanionAPI.Contracts.AIContracts.Dtos;
 
-public record MealDto(
+public record NutrientReportDto(
     string Name,
-    double Calories,
-    double Proteins,
     double Quantity,
-    string Unit
+    string Unit,
+    double Calories,
+    double Proteins
 );

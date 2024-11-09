@@ -76,22 +76,26 @@ public class ReportService : IReportService
         {
             foreach (var item in responseList)
             {
-                if (item is MealDto mealDto)
+                if (item is ReportDto reportDto)
                 {
-                    var createdMeal = Meal.Create(
-                        name: mealDto.Name,
-                        quantity: mealDto.Quantity,
-                        calories: mealDto.Calories,
-                        proteins: mealDto.Proteins,
-                        unit: mealDto.Unit);
-
-                    user.AddMeal(createdMeal);
-                    mealResponse.Add(CreateMealResponse(createdMeal));
-                }
-                else if (item is WeightDto weightDto)
-                {
-                    if(weightDto.weight > 0)
+                    if (reportDto.ReportType == "nutrient")
                     {
+                        var mealDto = reportDto.NutrientReport;
+
+                        var createdMeal = Meal.Create(
+                            name: mealDto.Name,
+                            quantity: mealDto.Quantity,
+                            calories: mealDto.Calories,
+                            proteins: mealDto.Proteins,
+                            unit: mealDto.Unit);
+
+                        user.AddMeal(createdMeal);
+                        mealResponse.Add(CreateMealResponse(createdMeal));
+                    }
+                    else if (reportDto.ReportType == "weight")
+                    {
+                        var weightDto = reportDto.WeightReport;
+
                         user.UpdateWeight(weightDto.weight ?? 0);
                         var goal = _goalService.CalcGoal(user);
 

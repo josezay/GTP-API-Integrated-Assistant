@@ -15,98 +15,107 @@ public class AIService : IAIService
     private readonly AssistantClient _client;
     private readonly OpenAISettings _openAISettings;
 
-    private const string SaveNutrientReportFunctionName = "save_nutrient_report";
-    private FunctionToolDefinition saveNutrientReportTool;
-
-    private const string UpdateWeightReportFunctionName = "update_weight_report";
-    private FunctionToolDefinition updateWeightReportTool;
+    private const string ReportToolFunctionName = "report_tool";
+    private FunctionToolDefinition _reportTool;
 
     public AIService(
         IOptions<OpenAISettings> settings)
     {
         _openAISettings = settings.Value;
         _client = new AssistantClient(apiKey: _openAISettings.ApiKey);
+
         InitializeAssistant();
     }
 
     private void InitializeAssistant()
     {
-        saveNutrientReportTool = new()
+        var reportTool = new FunctionToolDefinition
         {
-            FunctionName = SaveNutrientReportFunctionName,
-            Description = "Save the nutrient report",
+            FunctionName = ReportToolFunctionName,
+            Description = "Process either a nutrient report or a weight update",
             Parameters = BinaryData.FromString("""
             {
                 "type": "object",
                 "properties": {
-                    "name": {
+                    "reportType": {
                         "type": "string",
-                        "description": "The name of the food item."
+                        "description": "The type of report, either 'nutrient' or 'weight'."
                     },
-                    "quantity": {
-                        "type": "number",
-                        "description": "The amount (in provided unit) of food consumed."
+                    "nutrientReport": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the food item."
+                            },
+                            "quantity": {
+                                "type": "number",
+                                "description": "The amount (in provided unit) of food consumed."
+                            },
+                            "unit": {
+                                "type": "string",
+                                "description": "The unit of the quantity (e.g., ml, g)."
+                            },
+                            "calories": {
+                                "type": "number",
+                                "description": "The approximated number of calories in the food item."
+                            },
+                            "proteins": {
+                                "type": "number",
+                                "description": "The approximated number of proteins in the food item."
+                            }
+                        },
+                        "required": [ "name", "quantity", "unit", "calories", "proteins" ],
+                        "additionalProperties": false,
+                        "nullable": true
                     },
-                    "unit": {
-                        "type": "string",
-                        "description": "The unit of the quantity (e.g., ml, g)."
-                    },
-                    "calories": {
-                        "type": "number",
-                        "description": "The aproximated number of calories in the food item."
-                    },
-                    "proteins": {
-                        "type": "number",
-                        "description": "The aproximated number of proteins in the food item."
+                    "weightReport": {
+                        "type": "object",
+                        "properties": {
+                            "weight": {
+                                "type": "number",
+                                "description": "The weight converted in grams, of the user provided weight."
+                            }
+                        },
+                        "required": [ "weight" ],
+                        "additionalProperties": false,
+                        "nullable": true
                     }
                 },
-                "required": [ "name", "quantity", "unit", "calories", "proteins" ],
-                "additionalProperties": false  
-            }
-            """)
-        };
-
-        updateWeightReportTool = new()
-        {
-            FunctionName = UpdateWeightReportFunctionName,
-            Description = "Update the user weight in grams",
-            Parameters = BinaryData.FromString("""
-            {
-                "type": "object",
-                "properties": {
-                    "weight": {
-                        "type": "number",
-                        "description": "The weight converted in grams, of the user provided weight."
-                    }
-                },
-                "required": [ "weight" ],
+                "required": [ "reportType" ],
                 "additionalProperties": false
             }
-            """)
+        """)
         };
+
+        // Assign the combined tool to a class-level variable if needed
+        _reportTool = reportTool;
     }
+
 
     public ErrorOr<CreateAssistantResponse> CreateAssistant()
     {
-        string assistantInstruction = "" +
-            "Este assistente tem como objetivo receber reportes de quando o usuário se alimentar, ou fazer uma pesagem dele mesmo (usuário e não do alimento) para salvar no sistema o alimento que ingeriu, ou o peso atual do usuário para fins de atualização de cálculo de IMC." +
-            "-Caso a entrada seja de um alimento consumido, calcule o consumo de nutrientes com base nas entradas de alimentação fornecidas pelo usuário, " +
-            "estimando (não calculando) quanto de proteínas e calorias o alimento informado possui chamando save_nutrient_report. " +
-            "# Steps " +
-            "1. Receba a lista de alimentos (ou um alimento) consumidos pelo usuário. " +
-            "2. Caso não seja informada a quantidade (peso, volume) desses alimentos, estime-a. " +
-            "3. Identifique as calorias, proteínas e suas quantidades estimadas em cada alimento chamando a função save_nutrient_report, mas chamar save_nutrient_report somente se uma informação de consumo de alimento for informada, " +
-            "passando o nome da comida consumida, a quantidade (volume, peso) estimada consumida, e as quantidades de proteínas e calorias totais que provavelmente o alimento possui. " +
-            "4. Utilize uma base de dados confiável para obter as informações nutricionais dos alimentos. " +
-            "-Caso a entrada seja de um informe de atualização de pesagem (da pessoa usuária que está perguntando, e não do alimento), como 'hoje me pesei e estou com 97 quilos' ou 'estou me pesando mais ou menos 50kg', chamar a função update_weight_report passando o peso convertido em gramas somente se uma informação de pesagem do usuário for informada. " +
-            "Não chame a função update_weight_report se a entrada não estiver relacionada a uma atualização de peso da pessoa. Está tendo um bug, onde esta AI está chamando update_weight_report em uma query 'Comi um repolho' o que é incorreto.";
-
+        string assistantInstruction = $"""
+            Este assistente tem como objetivo receber reportes de quando o usuário se alimentar, ou fazer uma pesagem dele mesmo (usuário e não do alimento) para salvar no sistema o alimento que ingeriu, ou o peso atual do usuário para fins de atualização de cálculo de IMC.
+            - Caso a entrada seja de um alimento consumido, calcule o consumo de nutrientes com base nas entradas de alimentação fornecidas pelo usuário,
+            estimando (não calculando) quanto de proteínas e calorias o alimento informado possui chamando a função (tool) {ReportToolFunctionName} com o tipo de relatório 'nutrient'.
+            # Steps
+            1. Receba a lista de alimentos (ou um alimento) consumidos pelo usuário.
+            2. Caso não seja informada a quantidade (peso, volume) desses alimentos, estime-a.
+            3. Identifique as calorias, proteínas e suas quantidades estimadas em cada alimento chamando a função (tool) {ReportToolFunctionName}, passando o nome da comida consumida, a quantidade (volume, peso) estimada consumida, e as quantidades de proteínas e calorias totais que provavelmente o alimento possui dentro do objeto nutrientReport.
+            4. Utilize uma base de dados confiável para obter as informações nutricionais dos alimentos
+            5. Chamar a tool {ReportToolFunctionName} passando o peso convertido em gramas dentro do objeto nutrientReport.
+            6. Defina a propriedade reportType como 'nutrient' e preencha o objeto nutrientReport com as informações do alimento consumido.
+            - Caso a entrada seja de um informe de atualização de pesagem (da pessoa usuária que está perguntando, e não do alimento), como 'hoje me pesei e estou com 97 quilos' ou 'estou me pesando mais ou menos 50kg', 
+            1. Chamar a tool {ReportToolFunctionName} passando o peso convertido em gramas dentro do objeto weightReport.
+            2. Defina a propriedade reportType como 'weight' e preencha o objeto weightReport com o peso convertido em gramas.
+            """;
 
         AssistantCreationOptions assistantOptions = new()
         {
-            Name = "Nutrient Calculation Assistant, or Weigth report updater",
+            Name = "Nutrient Calculation Assistant, or Weight report updater",
             Instructions = assistantInstruction,
-            Tools = { saveNutrientReportTool, updateWeightReportTool }
+            Tools = { _reportTool }
         };
 
         var createAssistantResponse = new CreateAssistantResponse(_client.CreateAssistant(_openAISettings.Model, assistantOptions).Value.Id);
@@ -151,31 +160,15 @@ public class AIService : IAIService
 
                     switch (action.FunctionName)
                     {
-                        case SaveNutrientReportFunctionName:
+                        case ReportToolFunctionName:
                             {
+                                var reportDto = JsonSerializer.Deserialize<ReportDto>(argumentsJson.RootElement.GetRawText(), options);
 
-
-                                var mealDto = JsonSerializer.Deserialize<MealDto>(argumentsJson.RootElement.GetRawText(), options);
-
-                                if (mealDto != null)
+                                if (reportDto != null)
                                 {
-                                    createdItems.Add(mealDto);
-                                    toolOutputs.Add(new ToolOutput(action.ToolCallId, "Nutrient report saved successfully."));
+                                    createdItems.Add(reportDto);
+                                    toolOutputs.Add(new ToolOutput(action.ToolCallId, "Report processed successfully."));
                                 }
-                                break;
-                            }
-
-                        case UpdateWeightReportFunctionName:
-                            {
-                                var weightDto = JsonSerializer.Deserialize<WeightDto>(argumentsJson.RootElement.GetRawText(), options);
-
-
-                                if (weightDto is not null && weightDto.weight is not null)
-                                {
-                                    createdItems.Add(weightDto);
-                                    toolOutputs.Add(new ToolOutput(action.ToolCallId, "Weight report updated successfully."));
-                                }
-
                                 break;
                             }
 
