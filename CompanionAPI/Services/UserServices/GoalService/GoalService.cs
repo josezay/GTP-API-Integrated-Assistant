@@ -22,7 +22,7 @@ public class GoalService : IGoalService
         return Goal.Create(2000, 100);
     }
 
-    public async Task<ErrorOr<Goal>> AddGoal(AddGoalRequest request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Goal>> AddGoalToUser(AddGoalRequest request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserByIdAsync(request.UserId);
         if (user is null)

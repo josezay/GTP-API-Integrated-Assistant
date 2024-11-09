@@ -1,8 +1,10 @@
-﻿using CompanionAPI.Contracts.ReportContracts;
+﻿using CompanionAPI.Contracts.AIContracts.Dtos;
+using CompanionAPI.Contracts.ReportContracts;
 using CompanionAPI.Entities;
 using CompanionAPI.Errors;
 using CompanionAPI.Repositories.UserRepository;
 using CompanionAPI.Services.AiService;
+using CompanionAPI.Services.UserServices.GoalService;
 using ErrorOr;
 
 namespace CompanionAPI.Services.UserServices.ReportService;
@@ -11,14 +13,17 @@ public class ReportService : IReportService
 {
     private readonly IUserRepository _userRepository;
     private readonly IAIService _openAiService;
+    private readonly IGoalService _goalService;
 
     public ReportService(
             IUserRepository userRepository,
-            IAIService openAiService
+            IAIService openAiService,
+            IGoalService goalService
         )
     {
         _userRepository = userRepository;
         _openAiService = openAiService;
+        _goalService = goalService;
     }
 
     public async Task<ErrorOr<AddReportResponse>> AddReport(AddReportRequest request)
@@ -32,7 +37,7 @@ public class ReportService : IReportService
         var user = userResult.Value;
         var report = CreateAndAddReport(user, request.Query);
 
-        var aiResponse = await _openAiService.CallAI(report.Query);
+        var aiResponse = await _openAiService.CallAI(user, report.Query);
         if (aiResponse.IsError)
         {
             return aiResponse.Errors;
@@ -62,24 +67,47 @@ public class ReportService : IReportService
         return report;
     }
 
-    private AddReportResponse ProcessAIResponse(User user, object aiResponse)
+    private ErrorOr<AddReportResponse> ProcessAIResponse(User user, object aiResponse)
     {
-        AddReportMealResponse? mealResponse = null;
+        List<AddReportMealResponse> mealResponse = [];
         AddReportGoalResponse? goalResponse = null;
 
         if (aiResponse is List<object> responseList)
         {
             foreach (var item in responseList)
             {
-                if (item is Meal meal)
+                if (item is ReportDto reportDto)
                 {
-                    user.AddMeal(meal);
-                    mealResponse = CreateMealResponse(meal);
-                }
-                else if (item is Goal goal)
-                {
-                    user.AddGoal(goal);
-                    goalResponse = CreateGoalResponse(goal);
+                    if (reportDto.ReportType == "nutrient")
+                    {
+                        var mealDto = reportDto.NutrientReport;
+
+                        var createdMeal = Meal.Create(
+                            name: mealDto.Name,
+                            quantity: mealDto.Quantity,
+                            calories: mealDto.Calories,
+                            proteins: mealDto.Proteins,
+                            unit: mealDto.Unit);
+
+                        user.AddMeal(createdMeal);
+                        mealResponse.Add(CreateMealResponse(createdMeal));
+                    }
+                    else if (reportDto.ReportType == "weight")
+                    {
+                        var weightDto = reportDto.WeightReport;
+
+                        user.UpdateWeight(weightDto.weight ?? 0);
+                        var goal = _goalService.CalcGoal(user);
+
+                        if (goal.IsError)
+                        {
+                            return goal.Errors;
+                        }
+
+                        user.AddGoal(goal.Value);
+
+                        goalResponse = CreateGoalResponse(goal.Value);
+                    }
                 }
             }
         }
@@ -89,7 +117,7 @@ public class ReportService : IReportService
 
     private AddReportMealResponse CreateMealResponse(Meal meal)
     {
-        return new AddReportMealResponse((int)meal.Calories, (int)meal.Proteins);
+        return new AddReportMealResponse(meal.Name, (int)meal.Calories, (int)meal.Proteins);
     }
 
     private AddReportGoalResponse CreateGoalResponse(Goal goal)

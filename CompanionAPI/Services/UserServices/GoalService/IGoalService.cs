@@ -7,5 +7,5 @@ namespace CompanionAPI.Services.UserServices.GoalService;
 public interface IGoalService
 {
     ErrorOr<Goal> CalcGoal(User user);
-    Task<ErrorOr<Goal>> AddGoal(AddGoalRequest request, CancellationToken cancellationToken);
+    Task<ErrorOr<Goal>> AddGoalToUser(AddGoalRequest request, CancellationToken cancellationToken);
 }

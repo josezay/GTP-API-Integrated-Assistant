@@ -27,7 +27,7 @@ public class GoalController: ApiController
     [SwaggerResponse(400, "Invalid input data")]
     public async Task<IActionResult> CreateGoal([FromBody] AddGoalRequest request)
     {
-        var goalResult = await _goalService.AddGoal(request, HttpContext.RequestAborted);
+        var goalResult = await _goalService.AddGoalToUser(request, HttpContext.RequestAborted);
 
         return goalResult.Match(
             goalResult => Ok(_mapper.Map<GoalResponse>(goalResult)),

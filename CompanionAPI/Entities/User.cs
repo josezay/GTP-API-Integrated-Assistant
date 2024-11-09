@@ -85,6 +85,7 @@ public class User
         Activities = activities ?? [];
         Reports = [];
         Meals = [];
+        DailySummary = [];
     }
 
     public static User Onboard(
@@ -137,6 +138,7 @@ public class User
                 CaloriesGoalAchieved = false,
                 ProteinsGoalAchieved = false
             };
+
             DailySummary.Add(summary);
         }
         else
@@ -147,5 +149,10 @@ public class User
 
         // TODO: adicionar a lógica para verificar se as metas de calorias e proteínas foram atingidas
 
+    }
+
+    public void UpdateWeight(double weight)
+    {
+        Weight = weight;
     }
 }
