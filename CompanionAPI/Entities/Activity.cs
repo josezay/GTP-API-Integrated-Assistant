@@ -10,7 +10,7 @@ public class Activity
     public string Name { get; private set; }
 
     [FirestoreProperty]
-    public int WeeklyFrequency { get; private set; }
+    public double CaloriesBurned { get; private set; }
 
     [FirestoreProperty]
     public int DurationInMinutes { get; private set; }
@@ -22,24 +22,24 @@ public class Activity
 
     private Activity(
         string activityName,
-        int weeklyFrequency,
+        double caloriesBurned,
         int durationInMinutes,
         DateTime createdAt)
     {
         Name = activityName;
-        WeeklyFrequency = weeklyFrequency;
+        CaloriesBurned = caloriesBurned;
         DurationInMinutes = durationInMinutes;
         CreatedAt = createdAt;
     }
 
     public static Activity Create(
         string activityName,
-        int weeklyFrequency,
+        double caloriesBurned,
         int durationInMinutes)
     {
         return new Activity(
             activityName,
-            weeklyFrequency,
+            caloriesBurned,
             durationInMinutes,
             DateTime.UtcNow);
     }

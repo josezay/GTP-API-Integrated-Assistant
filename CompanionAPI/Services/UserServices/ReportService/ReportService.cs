@@ -70,6 +70,7 @@ public class ReportService : IReportService
     private ErrorOr<AddReportResponse> ProcessAIResponse(User user, object aiResponse)
     {
         List<AddReportMealResponse> mealResponse = [];
+        List<AddReportActivityResponse> activityResponse = [];
         AddReportGoalResponse? goalResponse = null;
 
         if (aiResponse is List<object> responseList)
@@ -80,17 +81,18 @@ public class ReportService : IReportService
                 {
                     if (reportDto.ReportType == "nutrient")
                     {
-                        var mealDto = reportDto.NutrientReport;
+                        foreach (var mealDto in reportDto.NutrientReport)
+                        {
+                            var createdMeal = Meal.Create(
+                                name: mealDto.Name,
+                                quantity: mealDto.Quantity,
+                                calories: mealDto.Calories,
+                                proteins: mealDto.Proteins,
+                                unit: mealDto.Unit);
 
-                        var createdMeal = Meal.Create(
-                            name: mealDto.Name,
-                            quantity: mealDto.Quantity,
-                            calories: mealDto.Calories,
-                            proteins: mealDto.Proteins,
-                            unit: mealDto.Unit);
-
-                        user.AddMeal(createdMeal);
-                        mealResponse.Add(CreateMealResponse(createdMeal));
+                            user.AddMeal(createdMeal);
+                            mealResponse.Add(CreateMealResponse(createdMeal));
+                        }
                     }
                     else if (reportDto.ReportType == "weight")
                     {
@@ -108,11 +110,31 @@ public class ReportService : IReportService
 
                         goalResponse = CreateGoalResponse(goal.Value);
                     }
+                    else if (reportDto.ReportType == "activity")
+                    {
+
+                        foreach(var activityDto in reportDto.ActivityReport)
+                        {
+
+                            var createdActivity = Activity.Create(
+                                activityDto.Name,
+                                activityDto.CaloriesBurned,
+                                activityDto.DurationInMinutes);
+
+                            user.AddActivity(createdActivity);
+                            activityResponse.Add(CreateActivityResponse(createdActivity));
+
+                        }
+                    }
+                    else
+                    {
+                        var a = reportDto.ReportType;
+                    }
                 }
             }
         }
 
-        return new AddReportResponse(mealResponse, goalResponse);
+        return new AddReportResponse(mealResponse, goalResponse, activityResponse);
     }
 
     private AddReportMealResponse CreateMealResponse(Meal meal)
@@ -123,5 +145,13 @@ public class ReportService : IReportService
     private AddReportGoalResponse CreateGoalResponse(Goal goal)
     {
         return new AddReportGoalResponse(goal.Calories, goal.Proteins);
+    }
+
+    private AddReportActivityResponse CreateActivityResponse(Activity activity)
+    {
+        return new AddReportActivityResponse(
+            activity.Name,
+            activity.DurationInMinutes,
+            activity.CaloriesBurned);
     }
 }

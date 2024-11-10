@@ -32,42 +32,44 @@ public class AIService : IAIService
         var reportTool = new FunctionToolDefinition
         {
             FunctionName = ReportToolFunctionName,
-            Description = "Process either a nutrient report or a weight update",
+            Description = "Process either a nutrient report, a weight update, or an activity report",
             Parameters = BinaryData.FromString("""
             {
                 "type": "object",
                 "properties": {
                     "reportType": {
                         "type": "string",
-                        "description": "The type of report, either 'nutrient' or 'weight'."
+                        "description": "The type of report, either 'nutrient', 'weight', or 'activity'."
                     },
                     "nutrientReport": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "description": "The name of the food item."
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the food item."
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "description": "The amount (in provided unit) of food consumed."
+                                },
+                                "unit": {
+                                    "type": "string",
+                                    "description": "The unit of the quantity (e.g., ml, g)."
+                                },
+                                "calories": {
+                                    "type": "number",
+                                    "description": "The approximated number of calories in the food item."
+                                },
+                                "proteins": {
+                                    "type": "number",
+                                    "description": "The approximated number of proteins in the food item."
+                                }
                             },
-                            "quantity": {
-                                "type": "number",
-                                "description": "The amount (in provided unit) of food consumed."
-                            },
-                            "unit": {
-                                "type": "string",
-                                "description": "The unit of the quantity (e.g., ml, g)."
-                            },
-                            "calories": {
-                                "type": "number",
-                                "description": "The approximated number of calories in the food item."
-                            },
-                            "proteins": {
-                                "type": "number",
-                                "description": "The approximated number of proteins in the food item."
-                            }
-                        },
-                        "required": [ "name", "quantity", "unit", "calories", "proteins" ],
-                        "additionalProperties": false,
-                        "nullable": true
+                            "required": [ "name", "quantity", "unit", "calories", "proteins" ],
+                            "additionalProperties": false
+                        }
                     },
                     "weightReport": {
                         "type": "object",
@@ -80,6 +82,29 @@ public class AIService : IAIService
                         "required": [ "weight" ],
                         "additionalProperties": false,
                         "nullable": true
+                    },
+                    "activityReport": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the activity."
+                                },
+                                "durationInMinutes": {
+                                    "type": "number",
+                                    "description": "The duration of the activity in minutes."
+                                },
+                                "caloriesBurned": {
+                                    "type": "number",
+                                    "description": "The number of calories burned during the activity."
+                                }
+                            },
+                            "required": [ "name", "durationInMinutes", "caloriesBurned" ],
+                            "additionalProperties": false,
+                            "nullable": true
+                        }
                     }
                 },
                 "required": [ "reportType" ],
@@ -96,9 +121,9 @@ public class AIService : IAIService
     public ErrorOr<CreateAssistantResponse> CreateAssistant()
     {
         string assistantInstruction = $"""
-            Este assistente tem como objetivo receber reportes de quando o usuário se alimentar, ou fazer uma pesagem dele mesmo (usuário e não do alimento) para salvar no sistema o alimento que ingeriu, ou o peso atual do usuário para fins de atualização de cálculo de IMC.
-            - Caso a entrada seja de um alimento consumido, calcule o consumo de nutrientes com base nas entradas de alimentação fornecidas pelo usuário,
-            estimando (não calculando) quanto de proteínas e calorias o alimento informado possui chamando a função (tool) {ReportToolFunctionName} com o tipo de relatório 'nutrient'.
+            Este assistente tem como objetivo receber reportes de quando o usuário se alimentar, fazer uma pesagem dele mesmo (usuário e não do alimento), ou registrar uma atividade física realizada pelo usuário para salvar no sistema.
+            - Caso a entrada seja de um alimento consumido, calcule o consumo de nutrientes com base nas entradas de alimentação fornecidas pelo usuário como 'Comi um repolho',
+            estimando (não calculando) quanto de proteínas e calorias o alimento informado possui chamando a função (tool) {ReportToolFunctionName} com o tipo de relatório (reportType) 'nutrient'.
             # Steps
             1. Receba a lista de alimentos (ou um alimento) consumidos pelo usuário.
             2. Caso não seja informada a quantidade (peso, volume) desses alimentos, estime-a.
@@ -109,11 +134,103 @@ public class AIService : IAIService
             - Caso a entrada seja de um informe de atualização de pesagem (da pessoa usuária que está perguntando, e não do alimento), como 'hoje me pesei e estou com 97 quilos' ou 'estou me pesando mais ou menos 50kg', 
             1. Chamar a tool {ReportToolFunctionName} passando o peso convertido em gramas dentro do objeto weightReport.
             2. Defina a propriedade reportType como 'weight' e preencha o objeto weightReport com o peso convertido em gramas.
+            - Caso a entrada seja de uma atividade física realizada pelo usuário, como 'corri 5km em 30 minutos' ou 'fiz 1 hora de musculação',
+            1. Chamar a tool {ReportToolFunctionName} passando o nome da atividade, a duração em minutos e as calorias consumidas (gastas) dentro do objeto activityReport.
+            2. Defina a propriedade reportType como 'activity' e preencha o objeto activityReport com as informações da atividade realizada.s
+            - Caso a entrada não seja de acordo com nenhuma das opções anteriores e a mensagem não for compreendida: 
+            1. Chamar a tool {ReportToolFunctionName} deixe todas as propriedades nulas, e reportType com o valor 'erro'
             """;
+
+        var reportTool = new FunctionToolDefinition
+        {
+            FunctionName = ReportToolFunctionName,
+            Description = "Process either a nutrient report, a weight update, or an activity report",
+            Parameters = BinaryData.FromString("""
+            {
+                "type": "object",
+                "properties": {
+                    "reportType": {
+                        "type": "string",
+                        "description": "The type of report, either 'nutrient', 'weight', or 'activity'."
+                    },
+                    "nutrientReport": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the food item."
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "description": "The amount (in provided unit) of food consumed."
+                                },
+                                "unit": {
+                                    "type": "string",
+                                    "description": "The unit of the quantity (e.g., ml, g)."
+                                },
+                                "calories": {
+                                    "type": "number",
+                                    "description": "The approximated number of calories in the food item."
+                                },
+                                "proteins": {
+                                    "type": "number",
+                                    "description": "The approximated number of proteins in the food item."
+                                }
+                            },
+                            "required": [ "name", "quantity", "unit", "calories", "proteins" ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "weightReport": {
+                        "type": "object",
+                        "properties": {
+                            "weight": {
+                                "type": "number",
+                                "description": "The weight converted in grams, of the user provided weight."
+                            }
+                        },
+                        "required": [ "weight" ],
+                        "additionalProperties": false,
+                        "nullable": true
+                    },
+                    "activityReport": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The name of the activity."
+                                },
+                                "durationInMinutes": {
+                                    "type": "number",
+                                    "description": "The duration of the activity in minutes."
+                                },
+                                "caloriesBurned": {
+                                    "type": "number",
+                                    "description": "The number of calories burned during the activity."
+                                }
+                            },
+                            "required": [ "name", "durationInMinutes", "caloriesBurned" ],
+                            "additionalProperties": false,
+                            "nullable": true
+                        }
+                    }
+                },
+                "required": [ "reportType" ],
+                "additionalProperties": false
+            }
+        """)
+        };
+
+        // Assign the combined tool to a class-level variable if needed
+        _reportTool = reportTool;
 
         AssistantCreationOptions assistantOptions = new()
         {
-            Name = "Nutrient Calculation Assistant, or Weight report updater",
+            Name = "Nutrient Calculation Assistant, Weight report updater, or Activity logger",
             Instructions = assistantInstruction,
             Tools = { _reportTool }
         };
@@ -121,6 +238,7 @@ public class AIService : IAIService
         var createAssistantResponse = new CreateAssistantResponse(_client.CreateAssistant(_openAISettings.Model, assistantOptions).Value.Id);
 
         return createAssistantResponse;
+
     }
 
     public async Task<ErrorOr<object>> CallAI(User user, string message)

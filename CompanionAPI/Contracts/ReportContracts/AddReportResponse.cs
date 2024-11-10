@@ -2,5 +2,6 @@
 
 public record AddReportResponse(
     List<AddReportMealResponse> Meals,
-    AddReportGoalResponse? Goal
+    AddReportGoalResponse? Goal,
+    List<AddReportActivityResponse> Activities
 );

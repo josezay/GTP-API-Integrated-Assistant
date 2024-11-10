@@ -121,10 +121,8 @@ public class User
         Reports.Add(report);
     }
 
-    public void AddMeal(Meal meal)
+    private void UpdateDailySummary(double calories, double proteins)
     {
-        Meals.Add(meal);
-
         var today = DateTime.UtcNow.Date;
         var summary = DailySummary.FirstOrDefault(ds => ds.Date == today);
 
@@ -133,8 +131,8 @@ public class User
             summary = new DailySummary
             {
                 Date = today,
-                TotalCaloriesConsumed = meal.Calories,
-                TotalProteinsConsumed = meal.Proteins,
+                TotalCaloriesConsumed = calories,
+                TotalProteinsConsumed = proteins,
                 CaloriesGoalAchieved = false,
                 ProteinsGoalAchieved = false
             };
@@ -143,12 +141,24 @@ public class User
         }
         else
         {
-            summary.TotalCaloriesConsumed += meal.Calories;
-            summary.TotalProteinsConsumed += meal.Proteins;
+            summary.TotalCaloriesConsumed += calories;
+            summary.TotalProteinsConsumed += proteins;
         }
 
         // TODO: adicionar a lógica para verificar se as metas de calorias e proteínas foram atingidas
+    }
 
+
+    public void AddMeal(Meal meal)
+    {
+        Meals.Add(meal);
+        UpdateDailySummary(meal.Calories, meal.Proteins);
+    }
+
+    public void AddActivity(Activity activity)
+    {
+        Activities.Add(activity);
+        UpdateDailySummary(activity.CaloriesBurned, 0);
     }
 
     public void UpdateWeight(double weight)
