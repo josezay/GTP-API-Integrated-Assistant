@@ -60,7 +60,8 @@ public class GoalService : IGoalService
         }
 
         var summary = new UserSumaryResponse(
-            _mapper.Map<GoalResponse>(user.Goals.LastOrDefault()!)
+            _mapper.Map<GoalResponse>(user.Goals.LastOrDefault()!),
+            user.DailySummary.Where(ds => ds.Date.Date == DateTime.Now.Date).FirstOrDefault()!
         );
 
         return summary;
