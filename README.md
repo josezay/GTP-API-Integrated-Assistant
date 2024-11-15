@@ -1,52 +1,35 @@
 # Companion API
 
-Este repositÃ³rio contÃ©m o cÃ³digo do projeto Companion utilizando .NET 8. Siga as instruÃ§Ãµes abaixo para configurar e executar o projeto.
+Este repositório contém o código do projeto Companion utilizando .NET 8. Siga as instruções abaixo para configurar e executar o projeto.
 
-## PrÃ©-requisitos
+## Pré-requisitos
 
 - .NET 8 SDK
 - Visual Studio 2022 ou superior (opcional)
 
-## InstalaÃ§Ã£o
+## Instalação
 
-1. Clone este repositÃ³rio:
-
-    ```bash
-    git clone git@github.com:josezay/CompanionAPI.git
-    ```
-
-2. Acesse o diretÃ³rio do projeto:
-
-    ```bash
-    cd CompanionAPI
-    ```
-
+1. Clone este repositório:
+2. Acesse o diretório do projeto:
 3. Restaure os pacotes NuGet:
+## Configuração do Firebase
 
-    ```bash
-    dotnet restore
-    ```
+Este projeto utiliza o Firebase para autenticação ou outros serviços. Para configurar corretamente, é necessário adicionar uma chave de conta de serviço ao projeto.
 
-## ConfiguraÃ§Ã£o do Firebase
+1. No diretório `Properties`, você encontrará o arquivo `serviceAccountKey.dev.json`. Este é um arquivo de exemplo para desenvolvimento. Renomeie este arquivo para `serviceAccountKey.json`:
+2. **Opcional**: Se você possui sua própria chave de conta de serviço do Firebase, adicione-a ao diretório `Properties` com o nome `serviceAccountKey.json`.
 
-Este projeto utiliza o Firebase para autenticaÃ§Ã£o ou outros serviÃ§os. Para configurar corretamente, Ã© necessÃ¡rio adicionar uma chave de conta de serviÃ§o ao projeto.
+   - Você pode obter uma nova chave de conta de serviço acessando o console do Firebase:
+     - Vá para **Configurações do Projeto** > **Contas de Serviço**.
+     - Clique em **Gerar nova chave privada** e salve o arquivo JSON no diretório `Properties` com o nome `serviceAccountKey.json`.
 
-1. No diretÃ³rio `Properties`, vocÃª encontrarÃ¡ o arquivo `serviceAccountKey.dev.json`. Este Ã© um arquivo de exemplo para desenvolvimento. Renomeie este arquivo para `serviceAccountKey.json`:
+## Configuração do appsettings
 
-    ```bash
-    mv Properties/serviceAccountKey.dev.json Properties/serviceAccountKey.json
-    ```
+Para configurar o arquivo `appsettings.Development.example.json`, siga os passos abaixo:
 
-2. **Opcional**: Se vocÃª possui sua prÃ³pria chave de conta de serviÃ§o do Firebase, adicione-a ao diretÃ³rio `Properties` com o nome `serviceAccountKey.json`.
-
-   - VocÃª pode obter uma nova chave de conta de serviÃ§o acessando o console do Firebase:
-     - VÃ¡ para **ConfiguraÃ§Ãµes do Projeto** > **Contas de ServiÃ§o**.
-     - Clique em **Gerar nova chave privada** e salve o arquivo JSON no diretÃ³rio `Properties` com o nome `serviceAccountKey.json`.
+1. No diretório `CompanionAPI`, você encontrará o arquivo `appsettings.Development.example.json`. Renomeie este arquivo para `appsettings.Development.json`:
+2. **Opcional**: Se você possui suas próprias configurações, edite o arquivo `appsettings.Development.json` conforme necessário.
 
 ## Executando o Projeto
 
 Para compilar e executar o projeto, use os comandos abaixo:
-
-```bash
-dotnet build
-dotnet run
