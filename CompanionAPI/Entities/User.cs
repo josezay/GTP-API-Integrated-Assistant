@@ -158,7 +158,7 @@ public class User
     public void AddActivity(Activity activity)
     {
         Activities.Add(activity);
-        UpdateDailySummary(activity.CaloriesBurned, 0);
+        UpdateDailySummary(activity.CaloriesBurned * (-1), 0);
     }
 
     public void UpdateWeight(double weight)
