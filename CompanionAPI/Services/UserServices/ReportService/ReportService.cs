@@ -72,6 +72,7 @@ public class ReportService : IReportService
         List<AddReportMealResponse> mealResponse = [];
         List<AddReportActivityResponse> activityResponse = [];
         AddReportGoalResponse? goalResponse = null;
+        AiResponseResponse? aiResponseResponse = null;
 
         if (aiResponse is List<object> responseList)
         {
@@ -126,6 +127,13 @@ public class ReportService : IReportService
 
                         }
                     }
+                    else if (reportDto.ReportType == "assistantResponse")
+                    {
+                        var assistantResponseDto = reportDto.AssistantResponse;
+
+
+                        aiResponseResponse = CreateAiResponseResponse(assistantResponseDto.message);
+                    }
                     else
                     {
                         var a = reportDto.ReportType;
@@ -134,7 +142,7 @@ public class ReportService : IReportService
             }
         }
 
-        return new AddReportResponse(mealResponse, goalResponse, activityResponse);
+        return new AddReportResponse(mealResponse, goalResponse, activityResponse, aiResponseResponse);
     }
 
     private AddReportMealResponse CreateMealResponse(Meal meal)
@@ -153,5 +161,10 @@ public class ReportService : IReportService
             activity.Name,
             activity.DurationInMinutes,
             activity.CaloriesBurned);
+    }
+
+    private AiResponseResponse CreateAiResponseResponse(string? aiResponse)
+    {
+        return new AiResponseResponse(aiResponse);
     }
 }
