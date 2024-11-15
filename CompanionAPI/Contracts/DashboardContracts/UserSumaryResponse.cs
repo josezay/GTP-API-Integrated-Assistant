@@ -1,5 +1,8 @@
-﻿namespace CompanionAPI.Contracts.GoalContracts;
+﻿using CompanionAPI.Entities;
+
+namespace CompanionAPI.Contracts.GoalContracts;
 
 public record UserSumaryResponse(
-    GoalResponse Goal
+    GoalResponse Goal,
+    DailySummary? DailySummary
 );
