@@ -105,6 +105,18 @@ public class AIService : IAIService
                             "additionalProperties": false,
                             "nullable": true
                         }
+                    },
+                    "assistantResponse": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "description": "If the assistant have something important to say to the user."
+                            }
+                        },
+                        "required": [ "message" ],
+                        "additionalProperties": false,
+                        "nullable": true
                     }
                 },
                 "required": [ "reportType" ],
@@ -137,8 +149,9 @@ public class AIService : IAIService
             - Caso a entrada seja de uma atividade física realizada pelo usuário, como 'corri 5km em 30 minutos' ou 'fiz 1 hora de musculação',
             1. Chamar a tool {ReportToolFunctionName} passando o nome da atividade, a duração em minutos e as calorias consumidas (gastas) dentro do objeto activityReport.
             2. Defina a propriedade reportType como 'activity' e preencha o objeto activityReport com as informações da atividade realizada.s
-            - Caso a entrada não seja de acordo com nenhuma das opções anteriores e a mensagem não for compreendida: 
-            1. Chamar a tool {ReportToolFunctionName} deixe todas as propriedades nulas, e reportType com o valor 'erro'
+            - Caso a entrada seja de um comando de ajuda, como 'o que você faz?' ou 'como você pode me ajudar?', ou se a mensagem do usuário não for compreendida para explicar o que o usuário pode fazer:
+            1. Chamar a tool {ReportToolFunctionName} passando a mensagem de ajuda dentro do objeto assistantResponse.
+            2. Defina a propriedade reportType como 'assistantResponse' e preencha o objeto assistantResponse com a mensagem de ajuda.
             """;
 
         AssistantCreationOptions assistantOptions = new()

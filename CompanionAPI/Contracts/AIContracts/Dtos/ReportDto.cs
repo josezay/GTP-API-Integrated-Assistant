@@ -4,5 +4,6 @@ public record ReportDto(
     string ReportType,
     List<NutrientReportDto>? NutrientReport,
     WeightReportDto? WeightReport,
-    List<ActivityReportDto>? ActivityReport
+    List<ActivityReportDto>? ActivityReport,
+    AssistantResponseDto? AssistantResponse
 );
