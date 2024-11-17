@@ -1,4 +1,5 @@
 ﻿using CompanionAPI.Entities;
+using Google.Api;
 using Google.Cloud.Firestore;
 
 namespace CompanionAPI.Repositories.UserRepository;
@@ -52,5 +53,25 @@ public class UserRepository : IUserRepository
         }
 
         return null;
+    }
+
+    public async Task<List<Report>> GetReportsFromLastThreeDaysAsync(string userId)
+    {
+        DocumentReference userDocument = _firestoreDb.Collection("users").Document(userId);
+        DocumentSnapshot userSnapshot = await userDocument.GetSnapshotAsync();
+
+        if (!userSnapshot.Exists)
+        {
+            return new List<Report>();
+        }
+
+        User user = userSnapshot.ConvertTo<User>();
+        var threeDaysAgo = DateTime.UtcNow.AddDays(-3);
+
+        List<Report> recentReports = user.Reports
+            .Where(report => report.QueriedAt >= threeDaysAgo)
+            .ToList();
+
+        return recentReports;
     }
 }

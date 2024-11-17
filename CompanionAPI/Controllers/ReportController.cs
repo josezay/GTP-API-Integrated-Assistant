@@ -34,4 +34,17 @@ public class ReportController : ApiController
             addReportResult => Ok(addReportResult),
             errors => Problem(errors));
     }
+
+    [HttpGet("last-three-days/{userId}")]
+    [SwaggerOperation(Summary = "Get reports from the last 3 days", Description = "Retrieves all reports created in the last 3 days for a specific user.")]
+    [SwaggerResponse(200, "Reports retrieved successfully")]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<IActionResult> GetReportsFromLastThreeDays(string userId)
+    {
+        var reportsResult = await _reportService.GetReportsFromLastThreeDays(userId);
+
+        return reportsResult.Match(
+            reports => Ok(reports),
+            errors => Problem(errors));
+    }
 }
