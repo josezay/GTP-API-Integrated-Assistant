@@ -167,4 +167,16 @@ public class ReportService : IReportService
     {
         return new AiResponseResponse(aiResponse);
     }
+
+    public async Task<ErrorOr<List<Report>>> GetReportsFromLastThreeDays(string userId)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user is null)
+        {
+            return UserErrors.UserNotExists;
+        }
+
+        var reports = await _userRepository.GetReportsFromLastThreeDaysAsync(userId);
+        return reports;
+    }
 }
