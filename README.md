@@ -2,6 +2,7 @@
 
 Projeto desenvolvido para testar integração e criação de assistentes integrados com AI.
 Constituído de uma arquitetura MVC simples.
+
 Este repositório contém o código do projeto Companion utilizando .NET 8. Siga as instruções abaixo para configurar e executar o projeto.
 
 ## Pré-requisitos
