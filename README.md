@@ -32,7 +32,3 @@ Para configurar o arquivo `appsettings.Development.example.json`, siga os passos
 
 1. No diretório `CompanionAPI`, você encontrará o arquivo `appsettings.Development.example.json`. Renomeie este arquivo para `appsettings.Development.json`:
 2. **Opcional**: Se você possui suas próprias configurações, edite o arquivo `appsettings.Development.json` conforme necessário.
-
-## Executando o Projeto
-
-Para compilar e executar o projeto, use os comandos abaixo:
